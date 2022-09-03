@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  backend:
+    image: maven:3.8.6-jdk-11-slim
+    container_name: be_knowledge_sharing
+    hostname: springboot-backend
+    # restart: always
+    ports:
+      - "8082:8080"
+    volumes:
+      - type: bind
+        source: ./back-end/knowsharing
+        target: /home/app
+    working_dir: /home/app
+    # entrypoint: [ "mvn", "spring-boot:run" ]
+    command: sh -c "mvn spring-boot:run"
+  frontend:
+    image: node:16-alpine
+    depends_on:
+      - backend
+    container_name: fe_knowledge_sharing
+    hostname: reactjs-frontend
+    # restart: always
+    ports:
+      - "3002:3002"
+    volumes:
+      - type: bind
+        source: ./front-end/knowledgesharing
+        target: /home/app
+    working_dir: /home/app
+    command: sh -c "yarn install && yarn start"
