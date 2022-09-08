@@ -2,9 +2,13 @@ version: "3.9"
 services:
   backend:
     image: maven:3.8.6-jdk-11-slim
+    depends_on:
+      - dbmysql
     container_name: be_knowledge_sharing
     hostname: springboot-backend
     # restart: always
+    networks:
+      - knowsh-network
     ports:
       - "8082:8080"
     volumes:
@@ -21,6 +25,8 @@ services:
     container_name: fe_knowledge_sharing
     hostname: reactjs-frontend
     # restart: always
+    networks:
+      - knowsh-network
     ports:
       - "3002:3002"
     volumes:
@@ -29,3 +35,18 @@ services:
         target: /home/app
     working_dir: /home/app
     command: sh -c "yarn install && yarn start"
+  dbmysql:
+    image: mysql
+    container_name: dbmysql_knowledge_sharing
+    hostname: mysql-database
+    networks:
+      - knowsh-network
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Abcd@1234
+
+
+networks:
+  knowsh-network:
+    driver: bridge
