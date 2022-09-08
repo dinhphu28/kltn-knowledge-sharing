@@ -18,6 +18,12 @@
 
 ## Mindmap - Features
 
+## Project plan
+
+Project plan file at:
+
+[KeHoach.xlsx](https://github.com/dinhphu28/kltn-knowledge-sharing/blob/main/document/KeHoach.xlsx)
+
 ## Run project with docker-compose
 
 ```sh
