@@ -30,8 +30,16 @@ public class UserRoleService {
         return sth;
     }
 
-    public List<UserRole> retrieveByUserId(String userId) {
-        return repo.findByUserId(userId);
+    public UserRole retrieveByUserId(String userId) {
+        UserRole sth = null;
+
+        try {
+            sth = repo.findByUserId(userId);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return sth;
     }
 
     public List<UserRole> retrieveByRoleId(String roleId) {
@@ -44,9 +52,9 @@ public class UserRoleService {
         try {
             repo.findById(new UserRoleId(userRole.getUserId(), userRole.getRoleId())).get();
 
-            tmp = repo.save(userRole);
         } catch (Exception e) {
             // TODO: handle exception
+            tmp = repo.save(userRole);
         }
 
         return tmp;

@@ -17,7 +17,7 @@ public class MailConfig {
         mailSender.setDefaultEncoding("UTF-8");
 
         mailSender.setUsername("lethuthao2002.ct@gmail.com");
-        mailSender.setPassword("ThuThao@2002");
+        mailSender.setPassword("xaftooofmrexqkdc");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

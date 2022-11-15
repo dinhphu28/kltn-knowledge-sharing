@@ -10,7 +10,7 @@ import com.ndp.knowsharing.Entities.IdClasses.UserRoleId;
 
 @Repository
 public interface UserRoleRepo extends JpaRepository<UserRole, UserRoleId> {
-    List<UserRole> findByUserId(String userId);
+    UserRole findByUserId(String userId);
 
     List<UserRole> findByRoleId(String roleId);
 }
