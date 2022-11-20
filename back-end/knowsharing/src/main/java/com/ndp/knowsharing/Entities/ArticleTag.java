@@ -19,7 +19,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AritcleTag {
+public class ArticleTag {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -31,4 +31,7 @@ public class AritcleTag {
 
     @Column(name = "c_tag_name")
     private String tagName;
+
+    @Column(name = "c_active")
+    private Integer isActive;
 }
