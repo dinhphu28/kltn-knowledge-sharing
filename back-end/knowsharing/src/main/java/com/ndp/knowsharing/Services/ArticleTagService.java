@@ -29,6 +29,10 @@ public class ArticleTagService {
         return sth;
     }
 
+    public List<ArticleTag> retrieveByCategory(String categoryId) {
+        return repo.findByCategory(categoryId);
+    }
+
     public ArticleTag createOne(ArticleTag articleTag) {
         ArticleTag tmp = null;
 

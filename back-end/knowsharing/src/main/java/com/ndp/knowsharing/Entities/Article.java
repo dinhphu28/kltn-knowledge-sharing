@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "app_fd_category")
+@Table(name = "app_fd_article")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,7 +31,7 @@ public class Article {
     @Column(name = "datecreated")
     private LocalDateTime dateCreated;
 
-    @Column(name = "datemodifed")
+    @Column(name = "datemodified")
     private LocalDateTime dateModified;
 
     @Column(name = "createdby")
