@@ -5,20 +5,20 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ndp.knowsharing.Entities.Role;
-import com.ndp.knowsharing.Repositories.RoleRepo;
+import com.ndp.knowsharing.Entities.ArticleTagRel;
+import com.ndp.knowsharing.Repositories.ArticleTagRelRepo;
 
 @Service
-public class RoleService {
+public class ArticleTagRelService {
     @Autowired
-    private RoleRepo repo;
+    private ArticleTagRelRepo repo;
 
-    public List<Role> retrieveAll() {
+    public List<ArticleTagRel> retrieveAll() {
         return repo.findAll();
     }
 
-    public Role retrieveById(String id) {
-        Role sth = null;
+    public ArticleTagRel retrieveById(String id) {
+        ArticleTagRel sth = null;
 
         try {
             sth = repo.findById(id).get();
@@ -29,27 +29,13 @@ public class RoleService {
         return sth;
     }
 
-    public Role createOne(Role role) {
-        Role tmp = null;
+    public ArticleTagRel createOne(ArticleTagRel articleTagRel) {
+        ArticleTagRel tmp = null;
 
-        role.setId(null);
-
-        try {
-            tmp = repo.save(role);
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
-        return tmp;
-    }
-
-    public Role updateOne(Role role) {
-        Role tmp = null;
+        articleTagRel.setId(null);
 
         try {
-            repo.findById(role.getId()).get();
-
-            tmp = repo.save(role);
+            tmp = repo.save(articleTagRel);
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -61,11 +47,7 @@ public class RoleService {
         Boolean isSuccess = false;
 
         try {
-            repo.findById(id).get();
-
             repo.deleteById(id);
-
-            isSuccess = true;
         } catch (Exception e) {
             // TODO: handle exception
         }
