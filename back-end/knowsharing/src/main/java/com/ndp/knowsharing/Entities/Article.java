@@ -10,8 +10,17 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
-@Table(name = "app_fd_category")
+@Table(name = "app_fd_article")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Article {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -22,7 +31,7 @@ public class Article {
     @Column(name = "datecreated")
     private LocalDateTime dateCreated;
 
-    @Column(name = "datemodifed")
+    @Column(name = "datemodified")
     private LocalDateTime dateModified;
 
     @Column(name = "createdby")
