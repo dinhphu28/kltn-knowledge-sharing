@@ -1,6 +1,7 @@
 package com.ndp.knowsharing.Controllers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ndp.knowsharing.Entities.Article;
+import com.ndp.knowsharing.Entities.ArticleTagRel;
 import com.ndp.knowsharing.Models.Article.ArticleCreateModel;
 import com.ndp.knowsharing.Models.Article.ArticleUpdateModel;
 import com.ndp.knowsharing.Models.Article.PageOfArticleModel;
 import com.ndp.knowsharing.Services.ArticleService;
+import com.ndp.knowsharing.Services.ArticleTagRelService;
 import com.ndp.knowsharing.Utils.UriParser.MyUriParserUtils;
 
 @RestController
@@ -33,6 +36,9 @@ public class ArticleController {
 
     @Autowired
     private MyUriParserUtils myUriParserUtils;
+
+    @Autowired
+    private ArticleTagRelService articleTagRelService;
 
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -107,6 +113,19 @@ public class ArticleController {
             if(tmpSaved == null) {
                 entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
             } else {
+
+                // add tag
+                List<ArticleTagRel> articleTagRels = new ArrayList<ArticleTagRel>();
+
+                for (String tagId : articleCreateModel.getTags()) {
+
+                    ArticleTagRel tmpz = new ArticleTagRel(null, tagId, tmpSaved.getId());
+
+                    articleTagRels.add(tmpz);
+                }
+
+                articleTagRelService.createMulti(articleTagRels);
+
                 entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
             }
         }
@@ -147,6 +166,22 @@ public class ArticleController {
                 if(tmpSaved == null) {
                     entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
                 } else {
+
+                    // Delete all current tags of article and re-create
+                    Long kk = articleTagRelService.deleteAllByArticleId(id);
+
+                    // add tag
+                    List<ArticleTagRel> articleTagRels = new ArrayList<ArticleTagRel>();
+
+                    for (String tagId : articleUpdateModel.getTags()) {
+
+                        ArticleTagRel tmpz = new ArticleTagRel(null, tagId, tmpSaved.getId());
+
+                        articleTagRels.add(tmpz);
+                    }
+
+                    articleTagRelService.createMulti(articleTagRels);
+
                     entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
                 }
             }
