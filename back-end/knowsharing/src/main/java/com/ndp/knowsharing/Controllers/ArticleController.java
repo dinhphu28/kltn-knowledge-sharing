@@ -1,6 +1,7 @@
 package com.ndp.knowsharing.Controllers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,10 +20,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ndp.knowsharing.Entities.Article;
+import com.ndp.knowsharing.Entities.ArticleTagRel;
+import com.ndp.knowsharing.Entities.Comment;
+import com.ndp.knowsharing.Entities.UserVoteState;
 import com.ndp.knowsharing.Models.Article.ArticleCreateModel;
 import com.ndp.knowsharing.Models.Article.ArticleUpdateModel;
 import com.ndp.knowsharing.Models.Article.PageOfArticleModel;
+import com.ndp.knowsharing.Models.Comment.CommentCreateModel;
+import com.ndp.knowsharing.Models.UserVoteState.UVSReturnModel;
+import com.ndp.knowsharing.Models.UserVoteState.UVSUpdateModel;
 import com.ndp.knowsharing.Services.ArticleService;
+import com.ndp.knowsharing.Services.ArticleTagRelService;
+import com.ndp.knowsharing.Services.CommentService;
+import com.ndp.knowsharing.Services.UserVoteStateService;
 import com.ndp.knowsharing.Utils.UriParser.MyUriParserUtils;
 
 @RestController
@@ -34,6 +45,16 @@ public class ArticleController {
     @Autowired
     private MyUriParserUtils myUriParserUtils;
 
+    @Autowired
+    private ArticleTagRelService articleTagRelService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private UserVoteStateService userVoteStateService;
+
+    // Temporary
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -107,6 +128,19 @@ public class ArticleController {
             if(tmpSaved == null) {
                 entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
             } else {
+
+                // add tag
+                List<ArticleTagRel> articleTagRels = new ArrayList<ArticleTagRel>();
+
+                for (String tagId : articleCreateModel.getTags()) {
+
+                    ArticleTagRel tmpz = new ArticleTagRel(null, tagId, tmpSaved.getId());
+
+                    articleTagRels.add(tmpz);
+                }
+
+                articleTagRelService.createMulti(articleTagRels);
+
                 entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
             }
         }
@@ -147,7 +181,170 @@ public class ArticleController {
                 if(tmpSaved == null) {
                     entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
                 } else {
+
+                    // Delete all current tags of article and re-create
+                    Long kk = articleTagRelService.deleteAllByArticleId(id);
+
+                    // add tag
+                    List<ArticleTagRel> articleTagRels = new ArrayList<ArticleTagRel>();
+
+                    for (String tagId : articleUpdateModel.getTags()) {
+
+                        ArticleTagRel tmpz = new ArticleTagRel(null, tagId, tmpSaved.getId());
+
+                        articleTagRels.add(tmpz);
+                    }
+
+                    articleTagRelService.createMulti(articleTagRels);
+
                     entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
+                }
+            }
+        }
+
+        return entity;
+    }
+
+    // For comments
+
+    @GetMapping(
+        value = "/{articleId}/comments",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> retrieveAllCommentsOfArticle(@PathVariable("articleId") String articleId, @RequestParam(value = "hidden", required = false) Boolean hidden) {
+        ResponseEntity<Object> entity;
+
+        List<Comment> comments;
+
+        if(hidden == null) {
+            comments = commentService.retrieveAllByArticleId(articleId);
+
+            entity = new ResponseEntity<>(comments, HttpStatus.OK);
+        } else {
+            comments = commentService.retrieveAllByArticleIdAndHidden(articleId, hidden ? 1 : 0);
+
+            entity = new ResponseEntity<>(comments, HttpStatus.OK);
+        }
+
+        return entity;
+    }
+
+    @PostMapping(
+        value = "/{articleId}/comments",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> createOneCommentOfArticle(@PathVariable("articleId") String articleId, @RequestBody CommentCreateModel commentCreateModel) {
+        ResponseEntity<Object> entity;
+
+        if(commentCreateModel.getAuthor() == null ||
+            commentCreateModel.getContent() == null
+        ) {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
+        } else {
+            LocalDateTime now = LocalDateTime.now();
+
+            Comment commentEntity = new Comment(null, now, now, "", "", "", "", commentCreateModel.getAuthor(), articleId, commentCreateModel.getContent(), 0);
+
+            Comment tmpSaved = commentService.createOne(commentEntity);
+
+            if(tmpSaved == null) {
+                entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
+            } else {
+                entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
+            }
+        }
+
+        return entity;
+    }
+
+    @DeleteMapping(
+        value = "/{articleId}/comments/{commentId}"
+    )
+    public ResponseEntity<Object> deleteOneCommentOfArticle(@PathVariable("articleId") String articleId, @PathVariable("commentId") String commentId) {
+        ResponseEntity<Object> entity;
+
+        Comment tmpLoad = commentService.retrieveById(commentId);
+
+        if(tmpLoad == null) {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+        } else {
+            if(!tmpLoad.getArticleId().equals(articleId)) {
+                entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+            } else {
+                Boolean isSuccess = false;
+
+                isSuccess = commentService.deleteById(commentId);
+
+                if(isSuccess) {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Deleted\" }", HttpStatus.OK);
+                } else {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+                }
+            }
+        }
+
+        return entity;
+    }
+
+    // For Vote - Evaluation
+
+    @GetMapping(
+        value = "/{articleId}/vote-state",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> retrieveOneUserVoteState(@PathVariable("articleId") String articleId, @RequestParam(value = "username", required = true) String username) {
+        ResponseEntity<Object> entity;
+
+        UserVoteState userVoteState = userVoteStateService.retrieveOneByArticleIdAndAuthor(articleId, username);
+
+        if(userVoteState == null) {
+            UVSReturnModel uvsReturnModel = new UVSReturnModel(articleId, username, 0);
+
+            entity = new ResponseEntity<>(uvsReturnModel, HttpStatus.OK);
+        } else {
+            UVSReturnModel uvsReturnModel = new UVSReturnModel(userVoteState.getArticleId(), userVoteState.getAuthor(), userVoteState.getVoteState());
+
+            entity = new ResponseEntity<>(uvsReturnModel, HttpStatus.OK);
+        }
+
+        return entity;
+    }
+
+    @PutMapping(
+        value = "/{articleId}/vote-state",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> updateUserVoteState(@PathVariable("articleId") String articleId, @RequestParam(value = "username", required = true) String username, @RequestBody UVSUpdateModel uvsUpdateModel) {
+        ResponseEntity<Object> entity;
+
+        if(uvsUpdateModel.getVoteState() == null) {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Vote state not be empty\" }", HttpStatus.BAD_REQUEST);
+        } else if(uvsUpdateModel.getVoteState() < -1 || uvsUpdateModel.getVoteState() > 1) {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Vote state is invalid\" }", HttpStatus.BAD_REQUEST);
+        } else {
+            UserVoteState tmpUVS = userVoteStateService.retrieveOneByArticleIdAndAuthor(articleId, username);
+
+            if(tmpUVS != null) {
+                UserVoteState uvsToSave = new UserVoteState(tmpUVS.getId(), null, null, "", "", "", "", articleId, username, uvsUpdateModel.getVoteState());
+
+                UserVoteState tmpSaved = userVoteStateService.updateOne(uvsToSave);
+
+                if(tmpSaved == null) {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Failed to save\" }", HttpStatus.BAD_REQUEST);
+                } else {
+                    entity = new ResponseEntity<>(tmpSaved, HttpStatus.OK);
+                }
+            } else {
+                UserVoteState uvsToSave = new UserVoteState(null, null, null, "", "", "", "", articleId, username, uvsUpdateModel.getVoteState());
+
+                UserVoteState tmpSaved = userVoteStateService.createOne(uvsToSave);
+
+                if(tmpSaved == null) {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Failed to save\" }", HttpStatus.BAD_REQUEST);
+                } else {
+                    entity = new ResponseEntity<>(tmpSaved, HttpStatus.OK);
                 }
             }
         }
