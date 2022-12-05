@@ -246,3 +246,20 @@ create table app_fd_user_report_category_rel (
                             foreign key (c_report_category_id) references app_fd_report_category(id)
 );
 
+insert into dir_user
+(id, username, password, firstName, lastName, email, avatar, verified, active) VALUES
+('admin', 'admin', '$2a$10$jLTZ9.FMCcnwVqXQDQhTou3GBN3LZo47Wef1pjiWCNyU18vvN//R2', 'Admin', 'Admin', null, null, 0, 1);
+
+insert into dir_role
+(id, name, description) VALUES
+('admin', 'admin', 'admin');
+insert into dir_role
+(id, name, description) VALUES
+('mod', 'mod', 'mod');
+insert into dir_role
+(id, name, description) VALUES
+('norm', 'norm', 'norm');
+
+insert into dir_user_role
+(roleId, userId) VALUES
+('admin', 'admin');
