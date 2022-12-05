@@ -1,5 +1,7 @@
 package com.ndp.knowsharing.Models.Article;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +27,6 @@ public class ArticleUpdateModel {
     private String category;
 
     private String thumbnailUrl;
+
+    private List<String> tags;
 }
