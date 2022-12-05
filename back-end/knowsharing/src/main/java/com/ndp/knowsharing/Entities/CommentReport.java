@@ -10,13 +10,17 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "app_fd_comment_report")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentReport {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -27,7 +31,7 @@ public class CommentReport {
     @Column(name = "datecreated")
     private LocalDateTime dateCreated;
 
-    @Column(name = "datemodifed")
+    @Column(name = "datemodified")
     private LocalDateTime dateModified;
 
     @Column(name = "createdby")
