@@ -181,6 +181,9 @@ public class AuthController {
         return entity;
     }
 
+    /*
+     * Send request: forgot password and send email to user (click to email's content to reset password)
+     */
     @GetMapping(
         value = "/forget-password/{username}",
         produces = MediaType.APPLICATION_JSON_VALUE

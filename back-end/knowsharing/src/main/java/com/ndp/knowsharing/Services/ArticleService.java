@@ -28,7 +28,7 @@ public class ArticleService {
         return articles;
     }
 
-    public List<Article> retriveOneCommonPageAndHidden(Integer pageNumber, Integer hidden) {
+    public List<Article> retrieveOneCommonPageAndHidden(Integer pageNumber, Integer hidden) {
         List<Article> articles = repo.findByHidden(hidden, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
         return articles;
