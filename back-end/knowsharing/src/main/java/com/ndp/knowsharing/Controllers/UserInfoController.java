@@ -96,10 +96,12 @@ public class UserInfoController {
 
                 User tmpToSave = new User(tmpFinded.getId(), tmpFinded.getUsername(), tmpFinded.getPassword(), tmpFinded.getFirstName(), tmpFinded.getLastName(), profileUpdateModel.getEmail(), profileUpdateModel.getAvatar(), tmpFinded.getVerified(), tmpFinded.getActive());
 
-                if(!tmpFinded.getEmail().equalsIgnoreCase(profileUpdateModel.getEmail())) {
-                    tmpToSave.setVerified(0);
+                if(tmpFinded.getEmail() != null && profileUpdateModel != null) {
+                    if(!tmpFinded.getEmail().equalsIgnoreCase(profileUpdateModel.getEmail())) {
+                        tmpToSave.setVerified(0);
+                    }
                 }
-
+                
                 User tmpSaved = userService.updateOne(tmpToSave);
 
                 if(tmpSaved != null) {
