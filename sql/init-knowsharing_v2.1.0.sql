@@ -2,6 +2,12 @@ create database knowsharing;
 
 use knowsharing;
 
+create table app_fd_files (
+    id varchar(255) not null primary key,
+    c_file_name_extension varchar(20),
+    c_file_name varchar(61)
+);
+
 create table dir_user (
     id varchar(255) not null primary key,
     username varchar(255),

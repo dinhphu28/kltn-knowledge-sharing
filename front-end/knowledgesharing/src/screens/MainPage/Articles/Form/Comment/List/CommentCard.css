@@ -1,0 +1,54 @@
+.comment-card {
+    margin-top: 1.5rem;
+    padding: 1rem 2rem 1rem 0;
+    display: flex;
+    box-shadow: 1px 1px 2px rgba(30, 30, 30, 0.2);
+    background: #fff;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.base-content {
+    display: flex;
+}
+
+.comment-card .base-content .comment-info img {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+}
+
+.comment-card .base-content .comment-info span {
+    margin-top: 0.25rem;
+    display: flex;
+    font-size: 0.85rem;
+}
+
+.comment-card .base-content p {
+    margin-left: 2rem;
+    margin-top: 1rem;
+    max-width: 78rem;
+}
+
+.comment-card .base-content .comment-info .username {
+    color: #29d;
+}
+
+.comment-card .base-content .comment-info .datetime {
+    color: #888
+}
+
+.comment-card .comment-report-btn {
+    justify-content: space-between;
+}
+
+#cmt-rp-ctn {
+    display: block;
+    resize: none;
+    outline: none;
+    min-height: 20rem;
+}
+
+#btn-hide-rp {
+    margin-left: 1rem;
+}

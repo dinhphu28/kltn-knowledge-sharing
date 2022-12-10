@@ -1,0 +1,60 @@
+.layer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #323232;
+    opacity: 0.7;
+
+    z-index: 3;
+}
+
+.my-popup2 {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 2rem;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; */
+    width: 90vw;
+    height: 90vh;
+
+    position: fixed;
+    top: 67.5%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+
+    background: #fff;
+    border-radius: 5px;
+
+    z-index: 4;
+}
+
+.confirm-btn2 {
+    margin-top: 3%;
+}
+
+.my-glob2 {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.my-glob2 textarea {
+    display: block;
+    resize: none;
+    outline: none;
+    white-space: nowrap;
+}
+
+.description-area2 textarea {
+    min-height: 8rem;
+}
+
+.content-area2 textarea {
+    min-height: 48rem;
+}
+
+#btn-cancel2 {
+    margin-top: 1rem;
+}
