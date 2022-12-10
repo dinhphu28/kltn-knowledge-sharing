@@ -10,6 +10,9 @@ import ScreenAuthSignIn from './screens/Auth/SignIn';
 import ScreenAuthForgetPassword from './screens/Auth/ForgetPassword';
 import ScreenMainPage from './screens/MainPage/MainPage';
 import AddArticle from './screens/MainPage/Articles/Form/AddArticle';
+import ScreenAuthSignUp from './screens/Auth/SignUp';
+import ScreenFormProfile from './screens/Profile/Form/Form';
+import ChangePassword from './screens/Auth/ChangePassword';
 
 
 function App() {
@@ -46,8 +49,12 @@ function App() {
             <Route path="/create-article" element={<AddArticle />} />
 
             <Route path="/sign-in" element={<ScreenAuthSignIn onHandleChange={receiveReloadToggle} />} />
-            {/* <Route path="/sign-up" element={<SignUpPage />} /> */}
+            <Route path="/sign-up" element={<ScreenAuthSignUp />} />
             <Route path="/forget-password" element={<ScreenAuthForgetPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+
+            <Route path="/profile" element={<ScreenFormProfile />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
 

@@ -75,7 +75,7 @@ function ScreenMainPage(props) {
         setCategory(category);
         setLoaded(false);
 
-        console.log("YY: ", category);
+        // console.log("YY: ", category);
     };
 
     const receiveHidden = (hidden) => {

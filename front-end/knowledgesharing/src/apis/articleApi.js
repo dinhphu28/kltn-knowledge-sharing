@@ -29,11 +29,13 @@ const articleApi = {
     put: (articleId, data) => {
         const url = `/articles/${articleId}`;
 
-        return axiosClient.put(url, data, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("token")
-            }
-        })
+        // return axiosClient.put(url, data, {
+        //     headers: {
+        //         'Authorization': 'Bearer ' + localStorage.getItem("token")
+        //     }
+        // })
+
+        return axiosClient.put(url, data);
     },
 
     delete: (articleId) => {

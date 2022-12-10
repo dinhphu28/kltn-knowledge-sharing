@@ -11,6 +11,7 @@ import articleApi from '../../../../apis/articleApi';
 import "./Content.css"
 import DOMPurify from 'dompurify';
 import ArticleCommentList from './Comment/List';
+import EditArticlePopup from './EditArticlePopup/EditArticlePopup';
 
 // ScreenArticleFormContent.propTypes = {
     
@@ -285,7 +286,7 @@ function ScreenArticleFormContent(props) {
                 <ArticleCommentList articleId={article.id}/>
             </div>
 
-            {/* {editPopupOpen ? <EditArticlePopup article={article} onHandleChange={receiveCancel} /> : ""} */}
+            {editPopupOpen ? <EditArticlePopup article={articleDetails} onHandleChange={receiveCancel} /> : ""}
 
             {/* {reportPopupOpen ? <ReportPopup articleId={article.id} onHandleChange={receiveRPCancel} /> : ""} */}
         </div>

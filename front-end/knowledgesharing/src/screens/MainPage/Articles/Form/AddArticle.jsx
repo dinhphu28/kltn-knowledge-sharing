@@ -70,7 +70,7 @@ function AddArticle(props) {
             const listItems = categoryList.map((item) => {
                 if(!isInDefaultCategory(item.name)) {
                     return <option
-                        key={item.name}
+                        key={item.id}
                         value={item.id}
                     >
                         {item.name}

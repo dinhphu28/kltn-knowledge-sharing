@@ -1,0 +1,33 @@
+.my-profile {
+    margin-top: 1rem;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.my-profile .username-section {
+    text-align: center;
+}
+
+.my-profile .username-section img {
+    margin-bottom: 1rem;
+    width: 20rem;
+    height: 20rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.my-form {
+    margin-top: 2.5rem;
+}
+
+.my-form #verified-label {
+    color: #198754;
+}
+
+.my-form #unverified-label {
+    color: #ffc107;
+}
+
+.my-form .btn-verify-email{
+    margin-left: 1rem;
+}

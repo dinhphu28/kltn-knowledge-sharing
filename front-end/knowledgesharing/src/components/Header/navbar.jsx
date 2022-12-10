@@ -7,6 +7,7 @@ import ReportManBtn from './reportManBtn';
 // import PropTypes from 'prop-types';
 import AdminManBtn from './adminManBtn';
 import { BASE_URL_API_BE } from '../../constants/global';
+import profileApi from '../../apis/profileApi';
 
 // navbar.propTypes = {
     
@@ -33,13 +34,13 @@ function UserAvtNav(props) {
             try {
                 const username = localStorage.getItem("username");
 
-                // const response = await profileApi.get(username);
+                const response = await profileApi.get(username);
 
-                // // setProfileInfo(response);
+                // setProfileInfo(response);
 
-                // setAvatar(response.avatar);
+                setAvatar(response.avatar);
 
-                // console.log("Fetch profile successfully: ", response);
+                console.log("Fetch profile successfully: ", response);
                 
             } catch (error) {
                 console.log("Failed to fetch profile info: ", error);
@@ -122,7 +123,7 @@ function NavBar(props) {
                 light
             >
                 <NavbarBrand id="my-brand-logo" href="/">
-                    Zound
+                    Metal
                 </NavbarBrand>
                 <NavbarToggler className="me-2" onClick={function noRefCheck(){} } />
                 <Collapse navbar>
