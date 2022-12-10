@@ -34,19 +34,23 @@ function ScreenFormProfile(props) {
 
         const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
         
-        if(email.length > 0) {
-            if(!re.test(email)) {
-                returnData = {
-                    error: true,
-                    msg: "Not match email format"
+        if(email !== null) {
+            if(email.length > 0) {
+                if(!re.test(email)) {
+                    returnData = {
+                        error: true,
+                        msg: "Not match email format"
+                    }
                 }
             }
         }
 
-        if(avatar.length < 10) {
-            returnData = {
-                error: true,
-                msg: "Length of url is invalid"
+        if(avatar !== null) {
+            if(avatar.length < 10) {
+                returnData = {
+                    error: true,
+                    msg: "Length of url is invalid"
+                }
             }
         }
 
@@ -81,7 +85,7 @@ function ScreenFormProfile(props) {
                 setAvatar(response.avatar);
                 setEmail(response.email);
                 setOldEmail(response.email);
-                setEmailVerified(response.emailVerified);
+                setEmailVerified(response.verified);
 
                 console.log("Fetch profile successfully: ", response);
                 
@@ -102,6 +106,8 @@ function ScreenFormProfile(props) {
                 firstName: "",
                 lastName: "",
             };
+
+            // console.log("Data profile: ", data);
 
             await profileApi.put(localStorage.getItem("username"), data);
 
@@ -167,7 +173,7 @@ function ScreenFormProfile(props) {
                 <FormGroup>
                     <Label>
                         Email: {oldEmail}
-                        {emailVerified ?
+                        {emailVerified === 1 ?
                             <h4 id="verified-label">
                                 Verified
                             </h4> :
