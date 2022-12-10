@@ -1,0 +1,61 @@
+.card {
+    padding: 1.2rem 2rem;
+    margin-top: 2rem;
+    display: flex;
+    position: relative;
+    box-shadow: 1px 1px 2px rgba(30, 30, 30, 0.3);
+    background: #fff;
+}
+
+.card img {
+    width: 250px;
+    height: 220px;
+    object-fit: cover;
+}
+
+.vote {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 1.2rem;
+    right: 2rem;
+}
+
+.vote span {
+    margin-left: 0.35rem;
+}
+
+.vote svg {
+    font-size: 2rem;
+    color: #888;
+    cursor: pointer;
+}
+
+.vote svg:not(:first-child) {
+    margin-left: 0.35rem;
+}
+
+.author {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 40rem;
+}
+
+.date {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 19.5rem;
+}
+
+.content {
+    margin-left: 1rem;
+}
+
+.content h2 a {
+    color: #04d28f;
+}
+
+.content p {
+    margin-top: 1.5rem;
+    display: inline-block;
+}

@@ -1,0 +1,106 @@
+.article {
+    margin-top: 1rem;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+#article-title {
+    font-size: 2.4rem;
+    color: green;
+}
+
+.article .article-info {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #888;
+}
+
+.article .article-info svg {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.article .article-info svg:not(:first-child) {
+    margin-left: 0.35rem;
+}
+
+.article .article-info svg:active {
+    color: #04d28f;
+}
+
+.article .article-info .vote {
+    display: flex;
+    align-items: center;
+}
+
+.article .article-info .vote span {
+    margin-left: 0.35rem;
+}
+
+.article .article-info .vote svg:active {
+    color: #04d28f;
+}
+
+.article .article-content h2,
+.article .article-content h3 {
+    display: block;
+    text-indent: 1.5rem;
+}
+
+.article .article-content p,
+.article .article-content h4,
+.article .article-content h5,
+.article .article-content h6{
+    display: block;
+    text-indent: 3rem;
+}
+
+.article .article-content p {
+    text-align: justify;
+}
+
+.article .article-content img {
+    display: block;
+    margin: 0 auto;
+    max-width: 50vh;
+    max-height: 70vh;
+}
+
+#btn-man {
+    margin-left: 1rem;
+    justify-content: space-between;
+}
+
+#btn-man svg {
+    margin-right: 0.5rem;
+}
+
+#btn-man #btn-edit {
+    margin-right: 1rem;
+    width: 6.25rem;
+    margin-bottom: 0.5rem;
+}
+
+#btn-man #btn-del {
+    margin-right: 1rem;
+    width: 6.25rem;
+    margin-bottom: 0.5rem;
+}
+
+#btn-man #btn-hide {
+    width: 6.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.hd-and-btn {
+    display: flex;
+    justify-content: space-between;
+}
+
+.article button svg {
+    margin-right: 0.5rem;
+}

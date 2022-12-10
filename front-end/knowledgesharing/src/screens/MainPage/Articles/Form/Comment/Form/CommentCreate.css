@@ -1,0 +1,25 @@
+.leave-comment {
+    margin-top: 1.5rem;
+    padding: 1rem 2rem 2rem 0;
+
+    display: flex;
+    align-items: center;
+
+    box-shadow: 1px 1px 2px rgba(30, 30, 30, 0.2);
+}
+
+.leave-comment img {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+}
+
+.leave-comment textarea {
+    padding: 1rem 2rem;
+    width: 100%;
+    border: none;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+}

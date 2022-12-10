@@ -1,0 +1,50 @@
+.contact-section {
+    background-image: linear-gradient(to right top, rgba(2,33,64,0.8) 55%, rgba(45,95,93,0.85)), url('./../images/Footer/info_wallpaper.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    margin-top: 10%;
+}
+
+.information {
+    list-style: none;
+    color: white;
+    line-height: 200%;
+    margin-top: 70px;
+    word-spacing: 1px;
+    font-size: 95%s;
+}
+
+.information .small-icon {
+    color: #427db4;
+    transition: all 0.3s;
+    margin-right: 1%;
+}
+
+.information .small-icon:hover,
+.information .small-icon:active {
+    transform: scale(1.3);
+}
+
+.social-icons {
+    margin-top: 50px;
+    list-style: none;
+}
+
+.social-icons li {
+    display: inline-block;
+    font-size: 250%;
+    margin-left: 20px;
+    color: white;
+}
+
+.social-icons li i {
+    transition: all .3s;
+    cursor: pointer;
+}
+
+.social-icons li:hover,
+.social-icons li:active {
+    transform: scale(1.3);
+    color: #e67e22;
+}
