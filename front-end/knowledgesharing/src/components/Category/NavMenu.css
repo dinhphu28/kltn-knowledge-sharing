@@ -1,0 +1,11 @@
+.nav-menu {
+    margin-left: 2rem;
+}
+
+.nav-menu #nav-item-add-cat {
+    margin-left: 2rem;
+}
+
+.nav-menu #nav-item-add-cat svg {
+    margin-right: 0.5rem;
+}

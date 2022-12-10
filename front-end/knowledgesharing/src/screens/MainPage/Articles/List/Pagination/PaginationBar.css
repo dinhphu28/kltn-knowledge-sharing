@@ -1,0 +1,13 @@
+.my-pagination-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    align-items: center;
+}
+
+.my-pagination-bar span {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    color: #888
+}
