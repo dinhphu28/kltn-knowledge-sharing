@@ -178,7 +178,7 @@ function ScreenFormProfile(props) {
                                 Verified
                             </h4> :
                             <h4 id="unverified-label">
-                                Not verified
+                                Unverified
                             </h4>
                         }
                     </Label>

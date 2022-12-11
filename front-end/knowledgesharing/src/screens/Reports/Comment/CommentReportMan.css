@@ -1,0 +1,45 @@
+.layer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #323232;
+    opacity: 0.7;
+
+    z-index: 3;
+}
+
+.my-rp-popup {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 1rem;
+
+    width: 70vw;
+    height: 90vh;
+
+    position: fixed;
+    top: 67.5%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+
+    background: #fff;
+    border-radius: 5px;
+
+    z-index: 4;
+}
+
+.my-rp-popup .my-report-card2 {
+    margin-top: 1rem;
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.my-rp-popup .my-popup-nav svg {
+    color: blue;
+    font-size: 1.5rem;
+}
+
+/* .my-rp-popup p {
+    text-align: justify;
+} */

@@ -1,0 +1,18 @@
+.my-reports-list {
+    margin-top: 1rem;
+}
+
+.my-reports-list .my-report-card {
+    margin-top: 1rem;
+    margin-left: 20rem;
+    margin-right: 20rem;
+}
+
+.my-reports-list .my-report-card p {
+    text-align: justify;
+}
+
+.btn-sw-report-separate {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}

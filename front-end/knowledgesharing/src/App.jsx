@@ -13,6 +13,8 @@ import AddArticle from './screens/MainPage/Articles/Form/AddArticle';
 import ScreenAuthSignUp from './screens/Auth/SignUp';
 import ScreenFormProfile from './screens/Profile/Form/Form';
 import ChangePassword from './screens/Auth/ChangePassword';
+import ScreenReportArticleList from './screens/Reports/Article/List';
+import ScreenReportCommentList from './screens/Reports/Comment/List';
 
 
 function App() {
@@ -47,6 +49,9 @@ function App() {
             <Route path="/articles/*" element={<ScreenMainPage />} />
             <Route path="/" element={<Navigate replace to="/articles" />} />
             <Route path="/create-article" element={<AddArticle />} />
+
+            <Route path="/article-reports" element={<ScreenReportArticleList />} />
+            <Route path="/comment-reports" element={<ScreenReportCommentList />} />
 
             <Route path="/sign-in" element={<ScreenAuthSignIn onHandleChange={receiveReloadToggle} />} />
             <Route path="/sign-up" element={<ScreenAuthSignUp />} />
