@@ -25,7 +25,7 @@ function ScreenReportArticleList(props) {
 
                 const response = await articleReportApi.getAll(params);
 
-                console.log("Fetch list reports successfully: ", response);
+                // console.log("Fetch list reports successfully: ", response);
 
                 setListReport(response);
 
@@ -42,10 +42,12 @@ function ScreenReportArticleList(props) {
     const fetchSolvedOrUnsolved = async (id, newSolvedState) => {
         try {
             const data = {
-                solved: newSolvedState
+                isSolved: newSolvedState
             };
 
-            await articleReportApi.putSolvedUnsolved(id, data);
+            // console.log("Article report mark solved data: " + id + "-- ", data);
+
+            await articleReportApi.put(id, data);
 
             // console.log("Fetch update solved state successfully: ", response);
 
@@ -102,7 +104,7 @@ function ScreenReportArticleList(props) {
                     <CardLink href={"/articles/" + item.articleUrl}>
                         Go to article
                     </CardLink>
-                    {item.solved ?
+                    {item.isSolved === 1 ?
                         <Button
                             color="primary"
                             className="float-end"

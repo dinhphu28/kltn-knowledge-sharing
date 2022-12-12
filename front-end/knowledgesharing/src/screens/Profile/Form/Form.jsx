@@ -87,7 +87,7 @@ function ScreenFormProfile(props) {
                 setOldEmail(response.email);
                 setEmailVerified(response.verified);
 
-                console.log("Fetch profile successfully: ", response);
+                // console.log("Fetch profile successfully: ", response);
                 
             } catch (error) {
                 console.log("Failed to fetch profile info: ", error);

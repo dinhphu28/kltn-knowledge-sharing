@@ -25,7 +25,7 @@ function ScreenReportCommentList(props) {
 
                 const response = await commentReportApi.getAll(params);
 
-                console.log("Fetch comment reports list successfully: ", response);
+                // console.log("Fetch comment reports list successfully: ", response);
 
                 setListReport(response);
                 
@@ -38,6 +38,21 @@ function ScreenReportCommentList(props) {
 
         fetchListReports();
     }, [solved]);
+
+    const fetchSolvedOrUnsolved = async (id, newSolvedState) => {
+        try {
+            const data = {
+                solved: newSolvedState
+            };
+
+            await commentReportApi.putSolvedUnsolved(id, data);
+
+            // console.log("Fetch update solved state successfully: ", response);
+
+        } catch (error) {
+            console.log("Failed to fetch comment report solved-unsolved: ", error);
+        }
+    }
 
     const loadListReportCards = () => {
         if(loaded) {
@@ -84,7 +99,7 @@ function ScreenReportCommentList(props) {
                     <CardText>
                         {item.content}
                     </CardText>
-                    {item.solved ?
+                    {item.solved === 1 ?
                         <CardText style={{color: "#198754"}}>
                             Solved
                         </CardText> :
@@ -110,12 +125,12 @@ function ScreenReportCommentList(props) {
                     <CardLink href={"/articles/" + item.articleUrl}>
                         Go to article
                     </CardLink>
-                    {item.solved ?
+                    {item.solved === 1 ?
                         <Button
                             color="primary"
                             className="float-end"
                             onClick={() => {
-                                // fetchSolvedOrUnsolved(item.id, false);
+                                fetchSolvedOrUnsolved(item.id, false);
                             }}
                         >
                             Mark as unsolved
@@ -124,7 +139,7 @@ function ScreenReportCommentList(props) {
                             color="primary"
                             className="float-end"
                             onClick={() => {
-                                // fetchSolvedOrUnsolved(item.id, true);
+                                fetchSolvedOrUnsolved(item.id, true);
                             }}
                         >
                             Mark as solved
@@ -145,7 +160,7 @@ function ScreenReportCommentList(props) {
 
     return (
         <div>
-            <Link to="/reports"
+            <Link to="/article-reports"
                 style={{marginLeft: "2rem"}}
             >
                 Article reports

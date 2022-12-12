@@ -94,7 +94,7 @@ function ListCommentReportPopup(props) {
                     <CardText>
                         {item.content}
                     </CardText>
-                    {item.solved ?
+                    {item.isSolved === 1 ?
                         <CardText style={{color: "#198754"}}>
                             Solved
                         </CardText> :
@@ -102,7 +102,7 @@ function ListCommentReportPopup(props) {
                             Unsolved
                         </CardText>
                     }
-                    {item.solved ?
+                    {item.isSolved === 1 ?
                         <Button
                             color="primary"
                             className="float-end"

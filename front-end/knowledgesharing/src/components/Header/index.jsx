@@ -10,7 +10,7 @@ function Header(props) {
     return (
         <div>
             <header>
-                    <NavBar />
+                <NavBar />
             </header>
         </div>
     );

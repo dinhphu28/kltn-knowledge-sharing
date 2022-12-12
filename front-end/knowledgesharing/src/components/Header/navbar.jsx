@@ -40,7 +40,7 @@ function UserAvtNav(props) {
 
                 setAvatar(response.avatar);
 
-                console.log("Fetch profile successfully: ", response);
+                // console.log("Fetch profile successfully: ", response);
                 
             } catch (error) {
                 console.log("Failed to fetch profile info: ", error);

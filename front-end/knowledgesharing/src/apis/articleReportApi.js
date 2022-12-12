@@ -22,14 +22,14 @@ const articleReportApi = {
     put: (id, data) => {
         const url = `/article-reports/${id}`;
 
-        return axiosClient(url, data);
+        return axiosClient.put(url, data);
     },
 
     getAllOfArticle: (articleId) => {
         const url = `/article-reports/${articleId}`
 
         return axiosClient.get(url);
-    },
-}
+    }
+};
 
 export default articleReportApi;
