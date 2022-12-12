@@ -80,5 +80,7 @@ public class ArticleItemReturnModel {
         this.thumbnailUrl = article.getThumbnailUrl();
 
         this.hidden = article.getHidden();
+
+        this.voteScore = voteScore;
     }
 }
