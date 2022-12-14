@@ -1,5 +1,6 @@
 package com.ndp.knowsharing.Services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,67 @@ public class ArticleService {
         return articles;
     }
 
+    public List<Article> retrieveOneCommonPageWithTags(List<String> tagIds, Integer pageNumber) {
+        
+        List<Article> articles = new ArrayList<Article>();
+        
+        try {
+            Page<Article> page = repo.findAllWithTagIds(tagIds, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
+    public Long retrieveNumOfPagesAllWithTagIds(List<String> tagIds) {
+        Long numOfPage = Long.valueOf(0);
+        
+        try {
+            Page<Article> page = repo.findAllWithTagIds(tagIds, PageRequest.of(0, 10, Sort.by("dateCreated").descending()));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
+    }
+
     public List<Article> retrieveOneCommonPageAndHidden(Integer pageNumber, Integer hidden) {
         List<Article> articles = repo.findByHidden(hidden, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
         return articles;
+    }
+
+    public List<Article> retrieveOneCommonPageAndHiddenWithTagIds(List<String> tagIds, Integer pageNumber, Integer hidden) {
+        List<Article> articles = new ArrayList<Article>();
+        
+        try {
+            Page<Article> page = repo.findByHiddenWithTagIds(tagIds, hidden, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
+    public Long retrieveNumOfPagesByHiddenWithTagIds(List<String> tagIds, Integer hidden) {
+        Long numOfPage = Long.valueOf(0);
+        
+        try {
+            Page<Article> page = repo.findByHiddenWithTagIds(tagIds, hidden, PageRequest.of(0, 10, Sort.by("dateCreated").descending()));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
     }
 
     public List<Article> retrieveOnePageByCategory(Integer pageNumber, String categoryId) {
@@ -40,10 +98,66 @@ public class ArticleService {
         return articles;
     }
 
+    public List<Article> retrieveOnePageByCategoryWithTagIds(List<String> tagIds, Integer pageNumber, String categoryId) {
+        List<Article> articles = new ArrayList<Article>();
+        
+        try {
+            Page<Article> page = repo.findByCategoryWithTagIds(tagIds, categoryId, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
+    public Long retrieveNumOfPagesByCategoryWithTagIds(List<String> tagIds, String categoryId) {
+        Long numOfPage = Long.valueOf(0);
+        
+        try {
+            Page<Article> page = repo.findByCategoryWithTagIds(tagIds, categoryId, PageRequest.of(0, 10, Sort.by("dateCreated").descending()));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
+    }
+
     public List<Article> retrieveOnePageByCategoryAndHidden(Integer pageNumber, String categoryId, Integer hidden) {
         List<Article> articles = repo.findByCategoryAndHidden(categoryId, hidden, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
         return articles;
+    }
+
+    public List<Article> retrieveOnePageByCategoryAndHiddenWithTagIds(List<String> tagIds, Integer pageNumber, String categoryId, Integer hidden) {
+        List<Article> articles = new ArrayList<Article>();
+        
+        try {
+            Page<Article> page = repo.findByCategoryAndHiddenWithTagIds(tagIds, categoryId, hidden, PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
+    public Long retrieveNumOfPagesByCategoryAndHiddenWithTagIds(List<String> tagIds, String categoryId, Integer hidden) {
+        Long numOfPage = Long.valueOf(0);
+        
+        try {
+            Page<Article> page = repo.findByCategoryAndHiddenWithTagIds(tagIds, categoryId, hidden, PageRequest.of(0, 10, Sort.by("dateCreated").descending()));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
     }
 
     public Long retrieveNumOfPages(String categoryId) {
