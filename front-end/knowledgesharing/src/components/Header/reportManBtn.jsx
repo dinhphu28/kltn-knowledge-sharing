@@ -9,7 +9,7 @@ import { faTasks } from '@fortawesome/free-solid-svg-icons';
 function ReportManBtn(props) {
     return (
         <div>
-            <Link className="my-svg-btn" to="/reports">
+            <Link className="my-svg-btn" to="/article-reports">
                 <FontAwesomeIcon icon={faTasks} />
             </Link>
         </div>

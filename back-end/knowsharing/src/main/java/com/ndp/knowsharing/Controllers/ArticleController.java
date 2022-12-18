@@ -55,117 +55,227 @@ public class ArticleController {
     @Autowired
     private UserVoteStateService userVoteStateService;
 
-    // Temporary
+    /*
+     * Retrieve Category
+     */
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> retrieveAll(@RequestParam(value = "page", required = true) Integer pageNum, @RequestParam(value = "category", required = false) String categoryName, @RequestParam(value = "hidden", required = false) Boolean hidden) {
+    public ResponseEntity<Object> retrieveAll(@RequestParam(value = "page", required = true) Integer pageNum, @RequestParam(value = "category", required = false) String categoryName, @RequestParam(value = "hidden", required = false) Boolean hidden, @RequestParam(value = "tagids", required = false) List<String> tagIds) {
         ResponseEntity<Object> entity;
 
         PageOfArticleModel pageOfArticleModel = new PageOfArticleModel();
 
         if(categoryName == null) {
             if(hidden == null) {
-                List<Article> articles = articleService.retrieveOneCommonPage(pageNum);
+                if(tagIds == null) {
+                    List<Article> articles = articleService.retrieveOneCommonPage(pageNum);
 
-                Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPages(categoryName).intValue()) / 10); // ceiling number of pages and convert to Integer
+                    Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPages(categoryName).intValue()) / 10); // ceiling number of pages and convert to Integer
 
-                List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
-                for(Article articleItem : articles) {
-                    List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
 
-                    Integer voteScore = 0;
+                        Integer voteScore = 0;
 
-                    for(UserVoteState uvsItem : userVoteStates) {
-                        voteScore = voteScore + uvsItem.getVoteState();
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
                     }
 
-                    ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
 
-                    articleItemReturnModels.add(articleItemReturnModel);
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
+                } else {
+                    List<Article> articles = articleService.retrieveOneCommonPageWithTags(tagIds, pageNum);
+
+                    Integer noPage = articleService.retrieveNumOfPagesAllWithTagIds(tagIds).intValue(); // ceiling number of pages and convert to Integer
+
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+
+                        Integer voteScore = 0;
+
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
+                    }
+
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
+
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
                 }
 
-                pageOfArticleModel.setNumberOfPages(noPage);
-                pageOfArticleModel.setCurrentPage(pageNum);
-                pageOfArticleModel.setArticles(articleItemReturnModels);
-
-                entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
             } else {
-                List<Article> articles = articleService.retrieveOneCommonPageAndHidden(pageNum, hidden ? 1 : 0);
+                if(tagIds == null) {
+                    List<Article> articles = articleService.retrieveOneCommonPageAndHidden(pageNum, hidden ? 1 : 0);
 
-                Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPagesAndHidden(categoryName, hidden ? 1 : 0).intValue()) / 10);
+                    Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPagesAndHidden(categoryName, hidden ? 1 : 0).intValue()) / 10);
 
-                List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
-                for(Article articleItem : articles) {
-                    List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
 
-                    Integer voteScore = 0;
+                        Integer voteScore = 0;
 
-                    for(UserVoteState uvsItem : userVoteStates) {
-                        voteScore = voteScore + uvsItem.getVoteState();
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
                     }
 
-                    ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
 
-                    articleItemReturnModels.add(articleItemReturnModel);
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
+                } else {
+                    List<Article> articles = articleService.retrieveOneCommonPageAndHiddenWithTagIds(tagIds, pageNum, hidden ? 1 : 0);
+
+                    Integer noPage = articleService.retrieveNumOfPagesByHiddenWithTagIds(tagIds, hidden ? 1 : 0).intValue();
+
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+
+                        Integer voteScore = 0;
+
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
+                    }
+
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
+
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
                 }
-
-                pageOfArticleModel.setNumberOfPages(noPage);
-                pageOfArticleModel.setCurrentPage(pageNum);
-                pageOfArticleModel.setArticles(articleItemReturnModels);
-
-                entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
             }
         } else {
             if(hidden == null) {
-                List<Article> articles = articleService.retrieveOnePageByCategory(pageNum, categoryName);
+                if(tagIds == null) {
+                    List<Article> articles = articleService.retrieveOnePageByCategory(pageNum, categoryName);
 
-                Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPages(categoryName).intValue()) / 10);
+                    Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPages(categoryName).intValue()) / 10);
 
-                List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
-                for(Article articleItem : articles) {
-                    List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
 
-                    Integer voteScore = 0;
+                        Integer voteScore = 0;
 
-                    for(UserVoteState uvsItem : userVoteStates) {
-                        voteScore = voteScore + uvsItem.getVoteState();
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
                     }
 
-                    ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
 
-                    articleItemReturnModels.add(articleItemReturnModel);
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
+                } else {
+                    List<Article> articles = articleService.retrieveOnePageByCategoryWithTagIds(tagIds, pageNum, categoryName);
+
+                    Integer noPage = articleService.retrieveNumOfPagesByCategoryWithTagIds(tagIds, categoryName).intValue();
+
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+
+                        Integer voteScore = 0;
+
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
+                    }
+
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
+
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
                 }
-
-                pageOfArticleModel.setNumberOfPages(noPage);
-                pageOfArticleModel.setCurrentPage(pageNum);
-                pageOfArticleModel.setArticles(articleItemReturnModels);
-
-                entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
             } else {
-                List<Article> articles = articleService.retrieveOnePageByCategoryAndHidden(pageNum, categoryName, hidden ? 1 : 0);
+                if(tagIds == null) {
+                    List<Article> articles = articleService.retrieveOnePageByCategoryAndHidden(pageNum, categoryName, hidden ? 1 : 0);
 
-                Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPagesAndHidden(categoryName, hidden ? 1 : 0).intValue()) / 10);
-                List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
-                for(Article articleItem : articles) {
-                    List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+                    Integer noPage = (int)Math.ceil(Double.valueOf(articleService.retrieveNumOfPagesAndHidden(categoryName, hidden ? 1 : 0).intValue()) / 10);
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
 
-                    Integer voteScore = 0;
+                        Integer voteScore = 0;
 
-                    for(UserVoteState uvsItem : userVoteStates) {
-                        voteScore = voteScore + uvsItem.getVoteState();
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
                     }
 
-                    ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
 
-                    articleItemReturnModels.add(articleItemReturnModel);
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
+                } else {
+                    List<Article> articles = articleService.retrieveOnePageByCategoryAndHiddenWithTagIds(tagIds, pageNum, categoryName, hidden ? 1 : 0);
+
+                    Integer noPage = articleService.retrieveNumOfPagesByCategoryAndHiddenWithTagIds(tagIds, categoryName, hidden ? 1 : 0).intValue();
+                    List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+                    for(Article articleItem : articles) {
+                        List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articleItem.getId());
+
+                        Integer voteScore = 0;
+
+                        for(UserVoteState uvsItem : userVoteStates) {
+                            voteScore = voteScore + uvsItem.getVoteState();
+                        }
+
+                        ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articleItem, voteScore);
+
+                        articleItemReturnModels.add(articleItemReturnModel);
+                    }
+
+                    pageOfArticleModel.setNumberOfPages(noPage);
+                    pageOfArticleModel.setCurrentPage(pageNum);
+                    pageOfArticleModel.setArticles(articleItemReturnModels);
+
+                    entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
                 }
-
-                pageOfArticleModel.setNumberOfPages(noPage);
-                pageOfArticleModel.setCurrentPage(pageNum);
-                pageOfArticleModel.setArticles(articleItemReturnModels);
-
-                entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
             }
         }
 

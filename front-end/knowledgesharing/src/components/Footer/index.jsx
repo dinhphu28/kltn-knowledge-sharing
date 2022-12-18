@@ -9,7 +9,7 @@ function Footer(props) {
         <div>
             <footer>
                 <p>
-                    Copyright &copy; 2021 by DinhPhuNguyen
+                    Copyright &copy; 2022 by DinhPhuNguyen
                 </p>
             </footer>
         </div>
