@@ -107,10 +107,10 @@ function ScreenMainPage(props) {
     };
 
     return (
-        <div>
+        <div style={{marginLeft: "2rem", marginRight: "2rem"}}>
             <CategoryNavMenu onHandleChangeCat={receiveCategory} onHandleChangeHid={receiveHidden} />
 
-            <div className='col-4' style={{display: "inline-block", margin: "1rem"}}>
+            <div className='col-4' style={{display: "inline-block", margin: "1rem", marginLeft: "2rem"}}>
                 <InputGroup>
                     <Input />
                     <Button>
