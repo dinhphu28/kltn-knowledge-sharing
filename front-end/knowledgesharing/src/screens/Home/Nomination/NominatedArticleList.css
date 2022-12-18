@@ -1,0 +1,15 @@
+.nomination-home-sec {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+}
+
+.nomination-home-row-left {
+    width: 70%;
+    /* background-color: green; */
+}
+
+.nomination-home-row-right {
+    width: 30%;
+    /* background-color: blue; */
+}

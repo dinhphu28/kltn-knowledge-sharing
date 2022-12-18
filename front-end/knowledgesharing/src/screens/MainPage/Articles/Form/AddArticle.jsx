@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { EditorState, convertToRaw, convertFromRaw, convertFromHTML, ContentState} from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 import { Button, Input, Label } from 'reactstrap';
 import articleApi from '../../../../apis/articleApi';
 import categoryApi from '../../../../apis/categoryApi';
@@ -15,7 +20,7 @@ function AddArticle(props) {
     const [content, setContent] = useState("");
     const [thumbnailUrl, setThumbnailUrl] = useState("");
     const [audioFileName, setAudioFileName] = useState("");
-    const [category, setCategory] = useState("Abc");
+    const [category, setCategory] = useState("05f15fb9-737b-4a44-a424-168f04d474c8"); // Category: Linux
     const [categoryList, setCategoryList] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
@@ -50,6 +55,34 @@ function AddArticle(props) {
             return false;
         }
     };
+
+
+    // const zzz = () => {
+    //     // const sampleMarkup = '<p><strong>Bold text</strong>, <em>Italic text</em><br>aaaaasdfasdfsafasdfas ádfasdfsadf ấdfsadf &lt;abc&gt;  &lt;/abc&gt;<br><a href="http://www.facebook.com/" target="_self">Example link</a></p>';
+    //     const sampleMarkup =
+    //         '<b>Bold text</b>, <i>Italic text</i><br/ ><br />' +
+    //         '<a href="http://www.facebook.com">Example link</a>';
+
+    //     const blocksFromHTML = convertFromHTML(sampleMarkup);
+    //     const state = ContentState.createFromBlockArray(
+    //         blocksFromHTML.contentBlocks,
+    //         blocksFromHTML.entityMap,
+    //     );
+
+    //     return state;
+    // }
+
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    //   const [editorState, setEditorState] = useState(EditorState.createWithContent(zzz()));
+
+    const onEditorStateChange = (editorState_param) => {
+        setEditorState(editorState_param)
+
+        setContent(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+        // console.log("VVVYYY: ", editorState.getCurrentContent())
+        // console.log("YYYTTT: ", convertFromRaw(htmlToDraft("<h1>Mot con meo</h1>")))
+    };
+
 
     const isInDefaultCategoryLabel = (catLabelParam) => {
         // if(catLabelParam === ARTICLE_CATEGORIES.front_end.label ||
@@ -287,11 +320,18 @@ function AddArticle(props) {
                     <Label>
                         Content:
                     </Label>
-                    <Input
+                    {/* <Input
                         type="textarea"
                         name="content"
                         onChange={e => changeInputValueContent(e)}
+                    /> */}
+                    <hr />
+                    <Editor
+                        // initialContentState={{"contentState"}}
+                        editorState={editorState}
+                        onEditorStateChange={onEditorStateChange}
                     />
+                    <hr />
                 </div>
                 <div className="thumbnail-area my-glob">
                     {/* <Label>

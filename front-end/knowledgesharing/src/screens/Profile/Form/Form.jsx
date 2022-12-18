@@ -87,7 +87,7 @@ function ScreenFormProfile(props) {
                 setOldEmail(response.email);
                 setEmailVerified(response.verified);
 
-                console.log("Fetch profile successfully: ", response);
+                // console.log("Fetch profile successfully: ", response);
                 
             } catch (error) {
                 console.log("Failed to fetch profile info: ", error);
@@ -178,7 +178,7 @@ function ScreenFormProfile(props) {
                                 Verified
                             </h4> :
                             <h4 id="unverified-label">
-                                Not verified
+                                Unverified
                             </h4>
                         }
                     </Label>

@@ -1,5 +1,6 @@
 package com.ndp.knowsharing.Controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ndp.knowsharing.Entities.ArticleTag;
+import com.ndp.knowsharing.Entities.Category;
 import com.ndp.knowsharing.Models.ArticleTag.ArticleTagCreateModel;
+import com.ndp.knowsharing.Models.ArticleTag.ArticleTagReturnModel;
 import com.ndp.knowsharing.Services.ArticleTagService;
+import com.ndp.knowsharing.Services.CategoryService;
 
 @RestController
 @CrossOrigin("*")
@@ -25,15 +29,29 @@ public class ArticleTagController {
     @Autowired
     private ArticleTagService articleTagService;
 
+    @Autowired
+    private CategoryService categoryService;
+
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> retrieveAll() {
         ResponseEntity<Object> entity;
 
+        List<ArticleTagReturnModel> articleTagReturnModels = new ArrayList<ArticleTagReturnModel>();
+
         List<ArticleTag> articleTags = articleTagService.retrieveAll();
 
-        entity = new ResponseEntity<>(articleTags, HttpStatus.OK);
+        for (ArticleTag articleTag : articleTags) {
+            Category category = categoryService.retrieveById(articleTag.getCategory());
+
+            ArticleTagReturnModel tmp = new ArticleTagReturnModel(articleTag.getId(), articleTag.getCategory(), category.getName(), articleTag.getTagName(), articleTag.getIsActive());
+
+            articleTagReturnModels.add(tmp);
+        }
+
+        // entity = new ResponseEntity<>(articleTags, HttpStatus.OK);
+        entity = new ResponseEntity<>(articleTagReturnModels, HttpStatus.OK);
 
         return entity;
     }

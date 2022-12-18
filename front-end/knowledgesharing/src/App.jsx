@@ -13,6 +13,11 @@ import AddArticle from './screens/MainPage/Articles/Form/AddArticle';
 import ScreenAuthSignUp from './screens/Auth/SignUp';
 import ScreenFormProfile from './screens/Profile/Form/Form';
 import ChangePassword from './screens/Auth/ChangePassword';
+import ScreenReportArticleList from './screens/Reports/Article/List';
+import ScreenReportCommentList from './screens/Reports/Comment/List';
+import AdminPage from './screens/Admin/AdminPage';
+import ScreenHomePage from './screens/Home/HomePage';
+import { Nav, NavItem, NavLink } from 'reactstrap';
 
 
 function App() {
@@ -22,6 +27,8 @@ function App() {
   const receiveReloadToggle = () => {
     setReloadToggle(!reloadToggle);
   };
+
+  console.log("Location: ", window.location.pathname);
 
   return (
     <div className="my-app">
@@ -43,10 +50,54 @@ function App() {
         <BrowserRouter>
           <Header />
           
+          {window.location.pathname === "/home" || window.location.pathname === "/articles" || window.location.pathname === "/" ?
+          <>
+            <Nav
+              // justified
+              pills
+            >
+              <NavItem>
+                <NavLink
+                  // active={adminMenu.name === "category"}
+                  active={window.location.pathname === "/home"}
+                  style={window.location.pathname !== "/articles" ? {backgroundColor: "#04d28f", color: "white"} : {}}
+                  href="/home"
+                  // onClick={() => {
+                  //   // setAdminMenu({name: "category", path: "category-management"});
+                  //   // navigate("/admin/category-management");
+                  // }}
+                >
+                  Home
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink
+                  // active={adminMenu.name === "user"}
+                  active={window.location.pathname === "/articles"}
+                  style={window.location.pathname === "/articles" ? {backgroundColor: "#04d28f", color: "white"} : {}}
+                  href="/articles"
+                  // onClick={() => {
+                  //   // setAdminMenu({name: "user", path: "user-management"});
+                  //   // navigate("/admin/user-management");
+                  // }}
+                >
+                  Articles
+                </NavLink>
+              </NavItem>
+            </Nav>
+            <br />
+          </>
+          : ""}
+          
+
           <Routes>
+            <Route path="/home/*" element={<ScreenHomePage />} />
             <Route path="/articles/*" element={<ScreenMainPage />} />
-            <Route path="/" element={<Navigate replace to="/articles" />} />
+            <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path="/create-article" element={<AddArticle />} />
+
+            <Route path="/article-reports" element={<ScreenReportArticleList />} />
+            <Route path="/comment-reports" element={<ScreenReportCommentList />} />
 
             <Route path="/sign-in" element={<ScreenAuthSignIn onHandleChange={receiveReloadToggle} />} />
             <Route path="/sign-up" element={<ScreenAuthSignUp />} />
@@ -54,6 +105,8 @@ function App() {
             <Route path="/change-password" element={<ChangePassword />} />
 
             <Route path="/profile" element={<ScreenFormProfile />} />
+
+            <Route path="/admin/*" element={<AdminPage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
