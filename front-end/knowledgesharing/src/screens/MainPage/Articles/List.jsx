@@ -3,6 +3,9 @@ import { useState } from 'react';
 import articleApi from '../../../apis/articleApi';
 import ArticleCard from './List/Item/ArticleCard';
 import PaginationBar from './List/Pagination/PaginationBar';
+import { Button, Card, CardBody, Collapse, Input } from 'reactstrap';
+import articleTagApi from '../../../apis/articleTagApi';
+import "./ScreenArticleList.css"
 // import PropTypes from 'prop-types';
 
 // ScreenArticleList.propTypes = {
@@ -19,30 +22,30 @@ function ScreenArticleList(props) {
     const [hidden, setHidden] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [articlesCrude, setArticlesCrude] = useState({});
+    const [listTagsInCategory, setListTagsInCategory] = useState([]);
+
+    const [selectTagsCollapseShow, setSelectTagsCollapseShow] = useState(false);
+
+    const [tagsSelected, setTagsSelected] = useState([]);
+    const [tagsSelectedSubmitted, setTagsSelectedSubmitted] = useState([]);
 
     useEffect(() => {
-        // const fetchArticleCrude = async () => {
-        //     try {
-        //         const params = {page: page, category: category.queryValue};
+        
+        const fetchListTagsByCategory = async () => {
+            try {
+                const params = {
+                    category: category.id
+                };
 
-        //         const response = await articleApi.getAll(params);
+                const response = await articleTagApi.getAll(params);
 
-        //         // console.log("Fetch article crude successfully", response);
+                setListTagsInCategory(response);
 
-        //         const data = response;
-
-        //         setArticlesCrude(data);
-
-        //         // console.log("These are articles list: ", data);
-
-        //         setLoaded(true);
-
-        //     } catch(error) {
-        //         // throw Promise;
-        //         console.log("Failed to fetch article crude: ", error);
-        //     }
-        // }
-        // fetchArticleCrude();
+                console.log("Fetch list tags by category successfully: ", response);
+            } catch (error) {
+                console.log("Failed to fetch list tags by category: ", error);
+            }
+        }
 
         const fetchArticleCrude = async () => {
             try {
@@ -51,7 +54,12 @@ function ScreenArticleList(props) {
                 const params = {
                     page: page,
                     category: category.id,
-                    hidden: hidden
+                    hidden: hidden,
+                    tagids: tagsSelectedSubmitted
+                //     tagids: [
+                //         "204c375e-eb40-49de-a556-b751899723d4",
+                //         "4ad1a2e7-7d7d-4343-a6d6-251aa6e4ebd6"
+                //     ]
                 };
 
                 const response = await articleApi.getAll(params);
@@ -72,7 +80,8 @@ function ScreenArticleList(props) {
             }
         }
         fetchArticleCrude();
-    }, [category, hidden, page, propCategory]);
+        fetchListTagsByCategory();
+    }, [category, hidden, page, propCategory, tagsSelectedSubmitted]);
 
     const receivePage = (indexPage) => {
         // alert("KKKK: " + indexPage);
@@ -80,21 +89,91 @@ function ScreenArticleList(props) {
         props.onHandleChange(indexPage);
     }
 
+    const changeSelectedTagsValue = (e) => {
+        // setTagsSelected(e.target.selectedOptions);
+        const value = Array.from(e.target.selectedOptions, option => option.value);
+        setTagsSelected(value);
+    }
+
+    const listJsxTagItems = listTagsInCategory.map((item) =>
+        <option key={item.id} value={item.id}>
+            {item.tagName}
+        </option>
+    )
+
     // const {articlesCrude} = props;
     const listItems = loaded ? articlesCrude.articles.map((item) => 
         <ArticleCard key={item.id} article={item} />
     ) : "";
-    
+
     return (
         // <div style={{marginLeft: "15rem", marginRight: "15rem"}}>
         <div>
+            <div className='my-flex-sec'>
+                <div className='my-flex-sec-left'>
+                    {category.id !== undefined ? <><Button
+                        color='primary'
+                        outline
+                        onClick={() => {
+                            setSelectTagsCollapseShow(!selectTagsCollapseShow);
+                        }}
+                        style={{marginBottom: "1rem"}}
+                    >
+                        Select tags
+                    </Button>
+                    <Collapse
+                        isOpen={selectTagsCollapseShow}
+                    >
+                        <Card>
+                            <CardBody>
+                                <Input
+                                    multiple
+                                    type='select'
+                                    onChange={e => {
+                                        changeSelectedTagsValue(e);
+                                    }}
+                                >
+                                    {loaded ? listJsxTagItems : ""}
+                                </Input>
+                                <Button
+                                    color='primary'
+                                    size='sm'
+                                    onClick={() => {
+                                        // console.log("VVZ: ", tagsSelected);
+                                        setTagsSelectedSubmitted(tagsSelected);
+                                    }}
+                                >
+                                    Submit
+                                </Button>
+                                {" "}
+                                <Button
+                                    // color='primary'
+                                    size='sm'
+                                    onClick={() => {
+                                        // console.log("VVZ: ", tagsSelected);
+                                        setTagsSelectedSubmitted([]);
+                                    }}
+                                >
+                                    Clear
+                                </Button>
+                            </CardBody>
+                        </Card>
+                    </Collapse></>
+                    : ""}
+                </div>
+                <div className='my-flex-sec-right'>
+
+                </div>
+            </div>
+            
+
             {listItems}
 
-        <PaginationBar
-            numberOfPages={articlesCrude.numberOfPages}
-            currentPage={articlesCrude.currentPage}
-            onHandleChange={receivePage}
-        />
+            <PaginationBar
+                numberOfPages={articlesCrude.numberOfPages}
+                currentPage={articlesCrude.currentPage}
+                onHandleChange={receivePage}
+            />
         </div>
     );
 }

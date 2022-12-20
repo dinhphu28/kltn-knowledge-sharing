@@ -1,0 +1,16 @@
+.my-flex-sec {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    margin-left: 2rem;
+}
+
+.my-flex-sec-left {
+    width: 60%;
+    /* background-color: green; */
+}
+
+.my-flex-sec-right {
+    width: 40%;
+    /* background-color: blue; */
+}
