@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ndp.knowsharing.Entities.ArticleTag;
@@ -35,12 +36,18 @@ public class ArticleTagController {
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> retrieveAll() {
+    public ResponseEntity<Object> retrieveAll(@RequestParam(value = "category", required = false) String categoryId) {
         ResponseEntity<Object> entity;
 
         List<ArticleTagReturnModel> articleTagReturnModels = new ArrayList<ArticleTagReturnModel>();
 
-        List<ArticleTag> articleTags = articleTagService.retrieveAll();
+        List<ArticleTag> articleTags;
+
+        if(categoryId == null) {
+            articleTags = articleTagService.retrieveAll();
+        } else {
+            articleTags = articleTagService.retrieveByCategory(categoryId);
+        }
 
         for (ArticleTag articleTag : articleTags) {
             Category category = categoryService.retrieveById(articleTag.getCategory());
