@@ -3,6 +3,7 @@ import { Button, Card, CardBody, CardLink, CardSubtitle, CardText, CardTitle, Bu
 import { Link } from 'react-router-dom';
 import articleReportApi from '../../../apis/articleReportApi';
 import ListArticleReportPopup from './ListArticleReportPopup';
+import "./ReportMan.css"
 // import PropTypes from 'prop-types';
 
 // ScreenReportArticleList.propTypes = {
