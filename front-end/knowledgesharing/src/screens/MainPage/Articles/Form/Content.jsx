@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faEye, faEyeSlash, faFile, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from 'reactstrap';
 // import PropTypes from 'prop-types';
 import userVoteStateApi from '../../../../apis/userVoteStateApi';
@@ -38,10 +38,29 @@ function ScreenArticleFormContent(props) {
 
     let navigate = useNavigate();
 
+    // const location = useLocation();
+
     useEffect(() => {
+
+        // const fetchArticleByUrl = async () => {
+        //     try {
+        //         // const response = await articleApi.getByUrl(location.pathname.substring(10));
+
+        //         // console.log("Fetch article by URL successfully: ", response);
+
+        //         // setArticleDetails(response);
+        //         // setTmpVoteScore(response.voteScore);
+
+        //         console.log("My URL: ", location.pathname.substring(10));
+        //     } catch (error) {
+        //         console.log("Failed to fetch article by URL: ", error);
+        //     }
+        // }
 
         const fetchArticleById = async () => {
             try {
+                // console.log("VZZ: ", article.id);
+
                 const response = await articleApi.getById(article.id);
 
                 console.log("Fetch article by id successfully: ", response);
@@ -53,7 +72,22 @@ function ScreenArticleFormContent(props) {
             }
         }
 
+        // console.log("VZZ: ", article.id);
+
+        // if(article) {
+        //     fetchArticleById();
+
+        //     setHideState(article.hidden);
+        // } else {
+        //     fetchArticleByUrl();
+
+        //     setHideState(articleDetails.hidden)
+        // }
+
         fetchArticleById();
+        // fetchArticleByUrl();
+
+        // setHideState(article.hidden);
 
         if(localStorage.getItem("username") !== null) {
             fetchGetUVS();
@@ -63,6 +97,7 @@ function ScreenArticleFormContent(props) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [article.hidden]);
+    // }, []);
 
     const fetchGetUVS = async () => {
         try {  
