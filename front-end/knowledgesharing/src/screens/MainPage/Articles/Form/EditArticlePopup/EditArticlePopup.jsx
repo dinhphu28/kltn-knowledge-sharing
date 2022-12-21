@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { EditorState, convertToRaw, convertFromRaw, convertFromHTML, ContentState} from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 import { Button, Input, Label } from 'reactstrap';
 import { BASE_URL_API_BE } from '../../../../../constants/global';
 import "./EditArticlePopup.css";
@@ -24,6 +29,20 @@ function EditArticlePopup(props) {
     const [categoryList, setCategoryList] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
+    const generateFirstValueForEditorContent = (inpHtmlStr) => {
+        const blocksFromHTML = convertFromHTML(inpHtmlStr);
+
+        const myState = ContentState.createFromBlockArray(
+            blocksFromHTML.contentBlocks,
+            blocksFromHTML.entityMap,
+        );
+
+        return myState;
+    };
+
+    // const [editorState, setEditorState] = useState(EditorState.createWithContent(generateFirstValueForEditorContent(content)));
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
     useEffect(() => {
         setNewArticle(article);
 
@@ -32,6 +51,8 @@ function EditArticlePopup(props) {
         setContent(article.content);
         setThumbnailUrl(article.thumbnailUrl);
         setAudioFileName(article.audioContent);
+
+        setEditorState(EditorState.createWithContent(generateFirstValueForEditorContent(article.content)));
         // setCategory(article.category);
 
         const fetchCategory = async () => {
@@ -109,6 +130,12 @@ function EditArticlePopup(props) {
     };
     const changeInputValueContent = (e) => {
         setContent(e.target.value);
+    };
+
+    const onEditorStateChange = (editorState_param) => {
+        setEditorState(editorState_param)
+
+        setContent(draftToHtml(convertToRaw(editorState.getCurrentContent())));
     };
     // const changeInputValueThumbnailUrl = (e) => {
     //     setThumbnailUrl(e.target.value);
@@ -294,12 +321,19 @@ function EditArticlePopup(props) {
                         <Label>
                             Content:
                         </Label>
-                        <Input
+                        {/* <Input
                             type="textarea"
                             name="content"
                             onChange={e => changeInputValueContent(e)}
                             defaultValue={newArticle.content}
+                        /> */}
+                        <hr />
+                        <Editor
+                            // initialContentState={{"contentState"}}
+                            editorState={editorState}
+                            onEditorStateChange={onEditorStateChange}
                         />
+                        <hr />
                     </div>
                     <div className="thumbnail-area2 my-glob2">
                         {/* <Label>

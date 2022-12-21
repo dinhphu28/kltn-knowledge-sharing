@@ -28,7 +28,7 @@ function App() {
     setReloadToggle(!reloadToggle);
   };
 
-  console.log("Location: ", window.location.pathname);
+  // console.log("Location: ", window.location.pathname);
 
   return (
     <div className="my-app">
@@ -50,46 +50,6 @@ function App() {
         <BrowserRouter>
           <Header />
           
-          {window.location.pathname === "/home" || window.location.pathname === "/articles" || window.location.pathname === "/" ?
-          <>
-            <Nav
-              // justified
-              pills
-            >
-              <NavItem>
-                <NavLink
-                  // active={adminMenu.name === "category"}
-                  active={window.location.pathname === "/home"}
-                  style={window.location.pathname !== "/articles" ? {backgroundColor: "#04d28f", color: "white"} : {}}
-                  href="/home"
-                  // onClick={() => {
-                  //   // setAdminMenu({name: "category", path: "category-management"});
-                  //   // navigate("/admin/category-management");
-                  // }}
-                >
-                  Home
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  // active={adminMenu.name === "user"}
-                  active={window.location.pathname === "/articles"}
-                  style={window.location.pathname === "/articles" ? {backgroundColor: "#04d28f", color: "white"} : {}}
-                  href="/articles"
-                  // onClick={() => {
-                  //   // setAdminMenu({name: "user", path: "user-management"});
-                  //   // navigate("/admin/user-management");
-                  // }}
-                >
-                  Articles
-                </NavLink>
-              </NavItem>
-            </Nav>
-            <br />
-          </>
-          : ""}
-          
-
           <Routes>
             <Route path="/home/*" element={<ScreenHomePage />} />
             <Route path="/articles/*" element={<ScreenMainPage />} />

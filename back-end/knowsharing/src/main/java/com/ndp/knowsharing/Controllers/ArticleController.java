@@ -305,6 +305,34 @@ public class ArticleController {
         return entity;
     }
 
+    @GetMapping(
+        value = "/by-url/{url}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> retrieveByUrl(@PathVariable("url") String url) {
+        ResponseEntity<Object> entity;
+
+        List<Article> articles = articleService.retrieveByUrl(url);
+
+        if(articles.size() > 0) {
+            List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articles.get(0).getId());
+
+            Integer voteScore = 0;
+
+            for(UserVoteState uvsItem : userVoteStates) {
+                voteScore = voteScore + uvsItem.getVoteState();
+            }
+
+            ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articles.get(0), voteScore);
+
+            entity = new ResponseEntity<>(articleItemReturnModel, HttpStatus.OK);
+        } else {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+        }
+
+        return entity;
+    }
+
     @PostMapping(
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE

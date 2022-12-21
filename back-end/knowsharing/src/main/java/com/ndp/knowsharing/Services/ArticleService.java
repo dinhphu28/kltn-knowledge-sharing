@@ -21,6 +21,10 @@ public class ArticleService {
         return repo.findAll();
     }
 
+    public List<Article> retrieveByUrl(String url) {
+        return repo.findByUrl(url);
+    }
+
     public List<Article> retrieveOneCommonPage(Integer pageNumber) {
         Page<Article> page = repo.findAll(PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
