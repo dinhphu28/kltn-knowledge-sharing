@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Button, Input, InputGroup } from 'reactstrap';
 import articleApi from '../../apis/articleApi';
 import CategoryNavMenu from '../../components/Category/NavMenu';
@@ -18,6 +18,12 @@ function ScreenMainPage(props) {
     const [hidden, setHidden] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [articlesCrude, setArticlesCrude] = useState([]);
+
+    const [redundantArticleByUrl, setRedundantArticleByUrl] = useState(null);
+    const [loaded2, setLoaded2] = useState(false);
+
+    const location = useLocation();
+    console.log("Curr Location: ", location.pathname.substring(10));
 
     useEffect(() => {
         // const fetchArticleCrude = async () => {
@@ -42,6 +48,29 @@ function ScreenMainPage(props) {
         //     }
         // }
         // fetchArticleCrude();
+
+        const fetchArticleByUrl = async () => {
+            try {
+                const response = await articleApi.getByUrl(location.pathname.substring(10));
+
+                console.log("Fetch article by URL successfully: ", response);
+
+                setRedundantArticleByUrl(response);
+
+                setLoaded2(true);
+
+                // setArticleDetails(response);
+                // setTmpVoteScore(response.voteScore);
+
+                console.log("My URL: ", location.pathname.substring(10));
+            } catch (error) {
+                console.log("Failed to fetch article by URL: ", error);
+            }
+        }
+
+        if(location.pathname !== "/articles") {
+            fetchArticleByUrl();
+        }
 
         const fetchArticleCrude = async () => {
             try {
@@ -101,10 +130,22 @@ function ScreenMainPage(props) {
                 //     dateCreated={item.dateCreated}
                 // />} />
             );
+            // console.log("Default: ", "beffff")
 
             return listItems;
         }
     };
+
+    const redundantArticleByUrlRoute = () => {
+
+        if(loaded2) {
+            // console.log("Redunt: ", "affff")
+
+            return (
+                <Route key={"red-" + redundantArticleByUrl.id} path={redundantArticleByUrl.url} element={<ScreenArticleFormContent article={redundantArticleByUrl} />} />
+            );
+        }
+    }
 
     return (
         <div style={{marginLeft: "2rem", marginRight: "2rem"}}>
@@ -136,6 +177,8 @@ function ScreenMainPage(props) {
                 />
 
                 {loadListRoute()}
+                {loaded2 && location.pathname !== "/articles" ? redundantArticleByUrlRoute() : ""}
+                {/* {redundantArticleByUrlRoute()} */}
 
             </Routes>
         </div>

@@ -41,6 +41,8 @@
 
 .user-avatar-nav a {
     color: inherit;
+
+    margin-right: 0.5rem;
 }
 
 #btn-sign-out {

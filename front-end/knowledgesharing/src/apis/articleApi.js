@@ -52,6 +52,12 @@ const articleApi = {
         const url = `/articles/${articleId}/hide`;
 
         return axiosClient.put(url, data);
+    },
+
+    getByUrl: (articleUrl) => {
+        const url = `/articles/by-url/${articleUrl}`;
+
+        return axiosClient.get(url);
     }
 };
 

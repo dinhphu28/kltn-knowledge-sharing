@@ -13,6 +13,9 @@ import com.ndp.knowsharing.Entities.Article;
 
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
+
+    List<Article> findByUrl(String url);
+
     List<Article> findByCategory(String category, Pageable pageable);
 
     List<Article> findByCategoryAndHidden(String category, Integer hidden, Pageable pageable);

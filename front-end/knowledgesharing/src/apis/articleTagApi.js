@@ -1,10 +1,10 @@
 import axiosClient from "./axiosClient";
 
 const articleTagApi = {
-    getAll: () => {
+    getAll: (params) => {
         const url = "/article-tags";
 
-        return axiosClient.get(url);
+        return axiosClient.get(url, {params});
     },
 
     getById: (id) => {

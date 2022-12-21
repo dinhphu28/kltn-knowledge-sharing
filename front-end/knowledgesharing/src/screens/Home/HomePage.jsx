@@ -11,9 +11,8 @@ import HighEvaluatedArticleList from './HighEvaluation/List';
 
 function ScreenHomePage(props) {
     return (
-        <div style={{marginLeft: "10rem", marginRight: "10rem"}}>
-            This is Home Page!!!
-            <hr/>
+        <div style={{marginLeft: "10rem", marginRight: "10rem", marginTop: "2rem"}}>
+            {/* <hr/> */}
             <NominatedArticleList />
 
             <br/>

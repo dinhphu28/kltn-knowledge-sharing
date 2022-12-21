@@ -132,11 +132,28 @@ function NavBar(props) {
                     navbar
                 >
                     <NavItem>
+                        <NavLink
+                            active={window.location.pathname === "/home" || window.location.pathname === "/"}
+                            href="/home"
+                        >
+                            Home
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            active={window.location.pathname === "/articles"}
+                            href="/articles"
+                        >
+                            Articles
+                        </NavLink>
+                    </NavItem>
+
+                    <NavItem style={{marginLeft: "1rem"}}>
                         <NavLink href="https://facebook.com/dinhphu.nguyen.355">
                             Facebook
                         </NavLink>
                     </NavItem>
-                    <NavItem style={{marginLeft: "1rem"}}>
+                    <NavItem>
                         <NavLink href="https://github.com/dinhphu28">
                             GitHub
                         </NavLink>
