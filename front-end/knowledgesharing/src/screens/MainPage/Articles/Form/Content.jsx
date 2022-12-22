@@ -40,6 +40,37 @@ function ScreenArticleFormContent(props) {
 
     // const location = useLocation();
 
+    const currentReadingArticle = {
+        id: article.id,
+        title: article.title,
+        author: article.author,
+        url: article.url
+    }
+
+    // console.log("VYVYVYV: ", currentReadingArticle);
+
+    const appendToReadingList = (item) => {
+        const readingListStr = localStorage.getItem("readingList");
+
+        if(readingListStr === null) {
+            const arrReadingList = new Array(item);
+
+            localStorage.setItem("readingList", JSON.stringify(arrReadingList));
+        } else {
+            const arrReadingList = JSON.parse(readingListStr);
+
+            const newArrReadingList = [item].concat(arrReadingList.filter(itemTmp => itemTmp.id !== item.id));
+
+            if(newArrReadingList.length > 5) {
+                localStorage.setItem("readingList", JSON.stringify(newArrReadingList.slice(0, 5)));
+            } else {
+                localStorage.setItem("readingList", JSON.stringify(newArrReadingList));
+            }
+        }
+    }
+
+    appendToReadingList(currentReadingArticle);
+
     useEffect(() => {
 
         // const fetchArticleByUrl = async () => {
@@ -144,7 +175,12 @@ function ScreenArticleFormContent(props) {
             localStorage.getItem("role") === "admin") {
             
             try {
-                await articleApi.delete(articleId);
+                // await articleApi.delete(articleId);
+                const data = {
+                    hidden: 1
+                };
+
+                await articleApi.hideShow(articleId, data);
 
                 alert("Article is deleted");
 

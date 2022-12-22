@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardBody, CardColumns, CardSubtitle, CardTitle } from 'reactstrap';
 // import PropTypes from 'prop-types';
 
@@ -7,11 +8,38 @@ import { Card, CardBody, CardColumns, CardSubtitle, CardTitle } from 'reactstrap
 // };
 
 function ReadingList(props) {
+
+    const loadReadingListArr = () => {
+        const readingListStr = localStorage.getItem("readingList");
+
+        if(readingListStr !== null) {
+            const arrReadingList = JSON.parse(readingListStr);
+
+            return arrReadingList.map((item) =>
+                <Card
+                    key={item.id}
+                    outline
+                    color='light'
+                // style={{marginBottom: "1rem"}}
+                >
+                    <CardBody>
+                        <CardTitle tag="h5">
+                            <Link to={"/articles/" + item.url}>{item.title}</Link>
+                        </CardTitle>
+                        <CardSubtitle>
+                            {item.author}
+                        </CardSubtitle>
+                    </CardBody>
+                </Card>
+            );
+        }
+    }
+
     return (
         <div style={{marginLeft: "1rem"}}>
             <h5>Reading</h5>
             <CardColumns>
-                <Card
+                {/* <Card
                     outline
                     color='light'
                     // style={{marginBottom: "1rem"}}
@@ -84,7 +112,8 @@ function ReadingList(props) {
                             Card Subtitle
                         </CardSubtitle>
                     </CardBody>
-                </Card>
+                </Card> */}
+                {loadReadingListArr()}
             </CardColumns>
         </div>
     );

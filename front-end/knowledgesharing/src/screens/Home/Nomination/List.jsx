@@ -6,6 +6,7 @@ import ReadingList from '../../../components/ReadingList/ReadingList';
 import { useEffect } from 'react';
 import nominatedArticleApi from '../../../apis/nominatedArticleApi';
 import { BASE_URL_API_BE } from '../../../constants/global';
+import { Link } from 'react-router-dom';
 
 // NominatedArticleList.propTypes = {
     
@@ -51,7 +52,8 @@ function NominatedArticleList(props) {
                         />
                         <CardBody>
                             <CardTitle tag="h5">
-                                {listNominatedArticles[ii].title}
+                                {/* {listNominatedArticles[ii].title} */}
+                                <Link to={"/articles/" + listNominatedArticles[ii].url}>{listNominatedArticles[ii].title}</Link>
                             </CardTitle>
                             <CardSubtitle
                                 className="mb-2 text-muted"
