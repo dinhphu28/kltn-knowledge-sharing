@@ -14,6 +14,8 @@ import com.ndp.knowsharing.Entities.Article;
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
 
+    List<Article> findTop5ByHiddenOrderByDateCreatedDesc(Integer hidden);
+
     List<Article> findByUrl(String url);
 
     List<Article> findByCategory(String category, Pageable pageable);

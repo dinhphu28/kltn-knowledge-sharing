@@ -25,6 +25,10 @@ public class ArticleService {
         return repo.findByUrl(url);
     }
 
+    public List<Article> retrieveTop5ByHiddenAndNewest(Integer hidden) {
+        return repo.findTop5ByHiddenOrderByDateCreatedDesc(hidden);
+    }
+
     public List<Article> retrieveOneCommonPage(Integer pageNumber) {
         Page<Article> page = repo.findAll(PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
