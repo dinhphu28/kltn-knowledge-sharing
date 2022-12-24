@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Collapse, DropdownItem, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from 'reactstrap';
+import { Button, Collapse, DropdownItem, DropdownMenu, DropdownToggle, Input, InputGroup, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from 'reactstrap';
 import AddArticleBtn from './addArticleBtn';
 import "./navbarStyles.css"
 import ReportManBtn from './reportManBtn';
@@ -109,10 +109,18 @@ function UserAvtNav(props) {
 function NavBar(props) {
 
     const [reloadToggle, setReloadToggle] = useState(false);
+    
+    const [searchStrValue, setSearchStrValue] = useState("");
+
+    let navigate = useNavigate();
 
     const receiveData = () => {
         setReloadToggle(!reloadToggle);
     };
+
+    const changeSearchInputValue = (e) => {
+        setSearchStrValue(e.target.value);
+    }
 
     return (
         <div className="my-navbar">
@@ -159,6 +167,21 @@ function NavBar(props) {
                         </NavLink>
                     </NavItem>
                 </Nav>
+
+                <InputGroup style={{marginLeft: "20rem", marginRight: "3rem"}}>
+                    <Input
+                        onChange={e => changeSearchInputValue(e)}
+                    />
+                    <Button
+                        onClick={() => {
+                            props.onHandleChangeSearchStr(searchStrValue);
+
+                            navigate("/search");
+                        }}
+                    >
+                        Search
+                    </Button>
+                </InputGroup>
 
                 {/* <AddArticleBtn /> */}
 

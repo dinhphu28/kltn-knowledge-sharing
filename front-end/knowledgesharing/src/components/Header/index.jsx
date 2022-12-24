@@ -7,10 +7,16 @@ import NavBar from './navbar';
 // };
 
 function Header(props) {
+
+    const receiveSearchStr = (searchStr) => {
+        // console.log("Received Search String: ", searchStr);
+        props.onHandleChangeSearchStr(searchStr);
+    }
+
     return (
         <div>
             <header>
-                <NavBar />
+                <NavBar onHandleChangeSearchStr={receiveSearchStr} />
             </header>
         </div>
     );
