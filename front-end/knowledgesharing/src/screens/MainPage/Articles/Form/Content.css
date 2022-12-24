@@ -92,6 +92,13 @@
 }
 
 #btn-man #btn-hide {
+    margin-right: 1rem;
+    width: 6.25rem;
+    margin-bottom: 0.5rem;
+}
+
+#btn-man #btn-nominate {
+    /* margin-right: 1rem; */
     width: 6.25rem;
     margin-bottom: 0.5rem;
 }

@@ -4,11 +4,13 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw, convertFromRaw, convertFromHTML, ContentState} from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
-import { Button, Input, Label } from 'reactstrap';
+import { Button, ButtonGroup, Input, Label } from 'reactstrap';
 import articleApi from '../../../../apis/articleApi';
 import categoryApi from '../../../../apis/categoryApi';
 import UploadFiles from '../../../../components/FileUpload/FileUpload';
+import { useNavigate } from 'react-router-dom';
 // import PropTypes from 'prop-types';
+import articleTagApi from '../../../../apis/articleTagApi';
 
 // AddArticle.propTypes = {
     
@@ -19,10 +21,15 @@ function AddArticle(props) {
     const [description, setDescription] = useState("");
     const [content, setContent] = useState("");
     const [thumbnailUrl, setThumbnailUrl] = useState("");
-    const [audioFileName, setAudioFileName] = useState("");
-    const [category, setCategory] = useState("05f15fb9-737b-4a44-a424-168f04d474c8"); // Category: Linux
+    // const [audioFileName, setAudioFileName] = useState("");
+    const [category, setCategory] = useState(null); // Category: Linux
     const [categoryList, setCategoryList] = useState([]);
     const [loaded, setLoaded] = useState(false);
+
+    const [listTagsLoaded, setListTagsLoaded] = useState([]);
+    const [tagsSelected, setTagsSelected] = useState([]);
+
+    let navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -33,6 +40,10 @@ function AddArticle(props) {
 
                 setCategoryList(response);
 
+                if(category === null) {
+                    setCategory(response[0].id);
+                }
+
                 setLoaded(true);
             } catch (error) {
                 console.log("Failed to fetch category: ", error);
@@ -40,7 +51,27 @@ function AddArticle(props) {
         }
 
         fetchCategory();
-    }, []);
+
+        const fetchListArticleTags = async (categoryId) => {
+            try {
+                const params = {
+                    category: categoryId
+                }
+
+                const response = await articleTagApi.getAll(params);
+
+                setListTagsLoaded(response);
+
+                console.log("Fetch article tags by category successfully: ", response);
+            } catch (error) {
+                console.log("Failed to fetch article tags by category: ", error);
+            }
+        }
+
+        if(category !== null) {
+            fetchListArticleTags(category);
+        }
+    }, [category]);
 
     const isInDefaultCategory = (catNameParam) => {
         if(catNameParam === "front-end" ||
@@ -117,6 +148,31 @@ function AddArticle(props) {
         }
     };
 
+    const onCheckboxBtnClick = (selected) => {
+        const index = tagsSelected.indexOf(selected);
+        if (index < 0) {
+            tagsSelected.push(selected);
+        } else {
+            tagsSelected.splice(index, 1);
+        }
+
+        setTagsSelected([...tagsSelected]);
+      };
+
+    const listJsxTagsLoadedItems = listTagsLoaded.map((item) => 
+        <Button
+            key={item.id}
+            color="info"
+            outline
+            onClick={() => {
+                onCheckboxBtnClick(item.id);
+            }}
+            active={tagsSelected.includes(item.id)}
+        >
+            {item.tagName}
+        </Button>
+    );
+
     const changeInputValueTitle = (e) => {
         setTitle(e.target.value.trim());
     };
@@ -132,8 +188,8 @@ function AddArticle(props) {
     const changeInputValueCategory = (e) => {
         if(!isInDefaultCategoryLabel(e.target.value)) {
             setCategory(e.target.value);
-            console.log("Value in event: ", e.target.value);
-            console.log("Value in state: ", category);
+            // console.log("Value in event: ", e.target.value);
+            // console.log("Value in state: ", category);
         } else {
             // setCategory(getQueryValueFromLabel(e.target.value));
         }
@@ -175,12 +231,12 @@ function AddArticle(props) {
             }
         }
 
-        if(audioFileName.length < 10) {
-            returnData = {
-                error: true,
-                msg: "Wrong url length"
-            }
-        }
+        // if(audioFileName.length < 10) {
+        //     returnData = {
+        //         error: true,
+        //         msg: "Wrong url length"
+        //     }
+        // }
 
         return returnData;
     };
@@ -193,37 +249,37 @@ function AddArticle(props) {
         if(validation.error) {
             alert(validation.msg);
         } else {
-            alert("Submit success")
+            // alert("Submit success")
             // handle submit ok here
             createArticleToBE();
 
-            const data = {
-                // author: localStorage.getItem("username"),
-                // title: title,
-                // description: description,
-                // content: content,
-                // audioContent: audioFileName,
-                // thumbnailUrl: thumbnailUrl,
-                // category: category,
+            // const data = {
+            //     // author: localStorage.getItem("username"),
+            //     // title: title,
+            //     // description: description,
+            //     // content: content,
+            //     // audioContent: audioFileName,
+            //     // thumbnailUrl: thumbnailUrl,
+            //     // category: category,
 
-                createdBy: localStorage.getItem("username"),
-                createdByName: "AA",
-                title: title,
-                description: description,
-                content: content,
-                audioContent: audioFileName,
-                author: localStorage.getItem("username"),
-                category: category,
-                thumbnailUrl: thumbnailUrl,
-                tags: []
-            };
+            //     createdBy: localStorage.getItem("username"),
+            //     createdByName: "AA",
+            //     title: title,
+            //     description: description,
+            //     content: content,
+            //     audioContent: "",
+            //     author: localStorage.getItem("username"),
+            //     category: category,
+            //     thumbnailUrl: thumbnailUrl,
+            //     tags: []
+            // };
 
-            console.log("VZVZ: ", data);
+            // console.log("VZVZ: ", data);
         }
     }
 
     const createArticleToBE = async () => {
-        if(audioFileName !== "") {
+        // if(audioFileName !== "") {
             try {
                 const data = {
                     // author: localStorage.getItem("username"),
@@ -239,21 +295,27 @@ function AddArticle(props) {
                     title: title,
                     description: description,
                     content: content,
-                    audioContent: audioFileName,
+                    audioContent: "",
                     author: localStorage.getItem("username"),
                     category: category,
                     thumbnailUrl: thumbnailUrl,
-                    tags: []
+                    tags: tagsSelected
                 };
     
                 const response = await articleApi.post(data);
     
                 console.log("Post article successfully: ", response);
+
+                alert("Submit success")
+
+                navigate("/articles");
     
             } catch(error) {
                 console.log("Failed to post article to BE: ", error.request);
+
+                alert("Submit failed")
             }
-        }
+        // }
     }
 
     // const getQueryValueFromLabel = (label) => {
@@ -279,9 +341,9 @@ function AddArticle(props) {
     //     }
     // };
 
-    const receiveAudioUrl = (auFileName) => {
-        setAudioFileName(auFileName);
-    }
+    // const receiveAudioUrl = (auFileName) => {
+    //     setAudioFileName(auFileName);
+    // }
 
     const receiveImageUrl = (imgFileName) => {
         setThumbnailUrl(imgFileName);
@@ -348,13 +410,13 @@ function AddArticle(props) {
                     <UploadFiles onHandleChange={receiveImageUrl} />
                     <hr />
                 </div>
-                <div className="audio-upload-area my-glob">
+                {/* <div className="audio-upload-area my-glob">
                     <Label>
                         Upload audio file:
                     </Label>
                     <UploadFiles onHandleChange={receiveAudioUrl} />
                     <hr />
-                </div>
+                </div> */}
                 <div className="category-area my-glob">
                     <Label>
                         Category:
@@ -382,6 +444,16 @@ function AddArticle(props) {
                         {loaded ? loadListCategory() : undefined}
                     </Input>
                 </div>
+                <br />
+                <div>
+                    <Label style={{marginRight: "1rem"}}>
+                        Select tags:
+                    </Label>
+                    <ButtonGroup>
+                        {listJsxTagsLoadedItems}
+                    </ButtonGroup>
+                </div>
+                <br />
                 <div className="confirm-btn">
                     <Button id="btn-create"
                         block

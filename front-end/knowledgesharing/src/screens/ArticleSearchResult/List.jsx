@@ -54,18 +54,18 @@ function ScreenArticleSearchResult(props) {
     return (
         <div>
             <div>
-                <h6 style={{marginLeft: "2rem"}}>Showing results for: {searchStrVal}</h6>
+                <h6 style={{marginLeft: "2rem", marginTop: "1rem"}}>{articlesCrude.numberOfPages > 0 ? "Showing results for: " : "No result for:"} {searchStrVal}</h6>
             </div>
             
             <div style={{marginLeft: "2rem", marginRight: "2rem"}}>
                 {listItems}
             </div>
 
-            <PaginationBar
+            {articlesCrude.numberOfPages > 0 ? <PaginationBar
                 numberOfPages={articlesCrude.numberOfPages}
                 currentPage={articlesCrude.currentPage}
                 onHandleChange={receivePage}
-            />
+            /> : ""}
         </div>
     );
 }
