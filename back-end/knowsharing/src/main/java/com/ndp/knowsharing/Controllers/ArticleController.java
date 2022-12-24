@@ -24,6 +24,7 @@ import com.ndp.knowsharing.Entities.ArticleTagRel;
 import com.ndp.knowsharing.Entities.Comment;
 import com.ndp.knowsharing.Entities.UserVoteState;
 import com.ndp.knowsharing.Models.Article.ArticleCreateModel;
+import com.ndp.knowsharing.Models.Article.ArticleHideShowModel;
 import com.ndp.knowsharing.Models.Article.ArticleItemReturnModel;
 import com.ndp.knowsharing.Models.Article.ArticleUpdateModel;
 import com.ndp.knowsharing.Models.Article.PageOfArticleModel;
@@ -333,6 +334,42 @@ public class ArticleController {
         return entity;
     }
 
+    @GetMapping(
+        value = "/search",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> searchArticles(@RequestParam(value = "q", required = true) String q, @RequestParam(value = "page", required = true) Integer pageNum) {
+        ResponseEntity<Object> entity;
+
+        PageOfArticleModel pageOfArticleModel = new PageOfArticleModel();
+
+        List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
+
+        List<Article> articles = articleService.retrieveWithFullTextSearchByTitleAndDescriptionAndContent(q, pageNum);
+
+        for (Article article : articles) {
+            List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(article.getId());
+
+            Integer voteScore = 0;
+
+            for(UserVoteState uvsItem : userVoteStates) {
+                voteScore = voteScore + uvsItem.getVoteState();
+            }
+
+            ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(article, voteScore);
+
+            articleItemReturnModels.add(articleItemReturnModel);
+        }
+
+        pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContent(q).intValue());
+        pageOfArticleModel.setCurrentPage(0);
+        pageOfArticleModel.setArticles(articleItemReturnModels);
+
+        entity = new ResponseEntity<>(pageOfArticleModel, HttpStatus.OK);
+
+        return entity;
+    }
+
     @PostMapping(
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
@@ -432,6 +469,37 @@ public class ArticleController {
                     articleTagRelService.createMulti(articleTagRels);
 
                     entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
+                }
+            }
+        }
+
+        return entity;
+    }
+
+    @PutMapping(
+        value = "/{articleId}/hide",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> hideShowArticle(@PathVariable("articleId") String articleId, @RequestBody ArticleHideShowModel articleHideShowModel) {
+        ResponseEntity<Object> entity;
+
+        if(articleHideShowModel.getHidden() == null) {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Not allow null\" }", HttpStatus.BAD_REQUEST);
+        } else {
+            Article tmpArticle = articleService.retrieveOne(articleId);
+
+            if(tmpArticle == null) {
+                entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+            } else {
+                tmpArticle.setHidden(articleHideShowModel.getHidden() ? 1 : 0);
+
+                Article tmpSaved = articleService.updateOne(tmpArticle);
+
+                if(tmpSaved == null) {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.INTERNAL_SERVER_ERROR);
+                } else {
+                    entity = new ResponseEntity<>(tmpSaved, HttpStatus.OK);
                 }
             }
         }
