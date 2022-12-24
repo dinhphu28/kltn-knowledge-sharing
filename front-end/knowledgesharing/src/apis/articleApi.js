@@ -58,6 +58,12 @@ const articleApi = {
         const url = `/articles/by-url/${articleUrl}`;
 
         return axiosClient.get(url);
+    },
+
+    getWithSearch: (params) => {
+        const url = '/articles/search';
+
+        return axiosClient.get(url, {params});
     }
 };
 

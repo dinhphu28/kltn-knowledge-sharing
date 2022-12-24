@@ -14,6 +14,8 @@ import com.ndp.knowsharing.Entities.Article;
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
 
+    List<Article> findTop5ByHiddenOrderByDateCreatedDesc(Integer hidden);
+
     List<Article> findByUrl(String url);
 
     List<Article> findByCategory(String category, Pageable pageable);
@@ -56,4 +58,14 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
         nativeQuery = true
     )
     Page<Article> findByCategoryAndHiddenWithTagIds(@Param("tagids") List<String> tagIds, @Param("category") String category, @Param("hidden") Integer hidden, Pageable pageable);
+
+    String query5 = "select a.id, a.dateCreated, a.dateModified, a.createdBy, a.createdByName, a.modifiedBy, a.modifiedByName, a.c_title, a.c_description, a.c_content, a.c_audio_content, a.c_author, a.c_url, a.c_category, a.c_thumbnail_url, a.c_hidden from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr )";
+    String countQuery5 = "select count(a.id) from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr )";
+    @Query(
+        value = query5,
+        countQuery = countQuery5,
+        nativeQuery = true
+    )
+    Page<Article> findWithFullTextSearchByTitleAndDescriptionAndContent(@Param("searchstr") String searchStr, Pageable pageable);
+    // List<Article> findWithFullTextSearchByTitleAndDescriptionAndContent(@Param("searchstr") String searchStr);
 }

@@ -25,6 +25,24 @@ public class ArticleService {
         return repo.findByUrl(url);
     }
 
+    public List<Article> retrieveTop5ByHiddenAndNewest(Integer hidden) {
+        return repo.findTop5ByHiddenOrderByDateCreatedDesc(hidden);
+    }
+
+    public List<Article> retrieveWithFullTextSearchByTitleAndDescriptionAndContent(String searchStr, Integer pageNumber) {
+        List<Article> articles = new ArrayList<Article>();
+        
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContent(searchStr, PageRequest.of(pageNumber, 10));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
     public List<Article> retrieveOneCommonPage(Integer pageNumber) {
         Page<Article> page = repo.findAll(PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
@@ -178,6 +196,20 @@ public class ArticleService {
         } else {
             return repo.countByCategoryAndHidden(categoryId, hidden);
         }
+    }
+
+    public Long retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContent(String searchStr) {
+        Long numOfPage = Long.valueOf(0);
+        
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContent(searchStr, PageRequest.of(0, 10));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
     }
 
     public Article retrieveOne(String id) {

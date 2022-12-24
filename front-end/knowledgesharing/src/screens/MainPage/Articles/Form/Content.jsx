@@ -4,7 +4,7 @@ import { faCaretUp, faEye, faEyeSlash, faFile, faTrash } from '@fortawesome/free
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from 'reactstrap';
+import { Button, Col, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 // import PropTypes from 'prop-types';
 import userVoteStateApi from '../../../../apis/userVoteStateApi';
 import articleApi from '../../../../apis/articleApi';
@@ -13,6 +13,7 @@ import DOMPurify from 'dompurify';
 import ArticleCommentList from './Comment/List';
 import EditArticlePopup from './EditArticlePopup/EditArticlePopup';
 import ArticleReportPopup from './ReportPopup/ReportPopup';
+import nominatedArticleApi from '../../../../apis/nominatedArticleApi';
 
 // ScreenArticleFormContent.propTypes = {
     
@@ -34,11 +35,44 @@ function ScreenArticleFormContent(props) {
     const [articleDetails, setArticleDetails] = useState({});
     const [loaded, setLoaded] = useState(false);
 
+    const [modalNominateIsOpen, setModalNominateIsOpen] = useState(false);
+
     // const [refresh, setRefresh] = useState(false);
 
     let navigate = useNavigate();
 
     // const location = useLocation();
+
+    const currentReadingArticle = {
+        id: article.id,
+        title: article.title,
+        author: article.author,
+        url: article.url
+    }
+
+    // console.log("VYVYVYV: ", currentReadingArticle);
+
+    const appendToReadingList = (item) => {
+        const readingListStr = localStorage.getItem("readingList");
+
+        if(readingListStr === null) {
+            const arrReadingList = new Array(item);
+
+            localStorage.setItem("readingList", JSON.stringify(arrReadingList));
+        } else {
+            const arrReadingList = JSON.parse(readingListStr);
+
+            const newArrReadingList = [item].concat(arrReadingList.filter(itemTmp => itemTmp.id !== item.id));
+
+            if(newArrReadingList.length > 5) {
+                localStorage.setItem("readingList", JSON.stringify(newArrReadingList.slice(0, 5)));
+            } else {
+                localStorage.setItem("readingList", JSON.stringify(newArrReadingList));
+            }
+        }
+    }
+
+    appendToReadingList(currentReadingArticle);
 
     useEffect(() => {
 
@@ -99,6 +133,10 @@ function ScreenArticleFormContent(props) {
     }, [article.hidden]);
     // }, []);
 
+    const toggleModalNominate = () => {
+        setModalNominateIsOpen(!modalNominateIsOpen);
+    }
+
     const fetchGetUVS = async () => {
         try {  
             const params = {
@@ -144,7 +182,12 @@ function ScreenArticleFormContent(props) {
             localStorage.getItem("role") === "admin") {
             
             try {
-                await articleApi.delete(articleId);
+                // await articleApi.delete(articleId);
+                const data = {
+                    hidden: 1
+                };
+
+                await articleApi.hideShow(articleId, data);
 
                 alert("Article is deleted");
 
@@ -169,6 +212,31 @@ function ScreenArticleFormContent(props) {
 
             } catch(error) {
                 console.log("Failed to fetch hide-show article: ", error);
+            }
+        }
+    }
+
+    const fetchUpdateNominateArticleWithPosition = async (positionIndex) => {
+        if(localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") {
+            try {
+                const data = {
+                    articleId: articleDetails.id
+                }
+
+                const response = await nominatedArticleApi.put("nomination-" + positionIndex, data);
+
+                console.log("Fetch put nominated article successfully: ", response);
+
+                alert("Success");
+
+                setModalNominateIsOpen(false);
+
+            } catch (error) {
+                console.log("Failed to fetch put nominated articles: ", error);
+
+                alert("Failed");
+
+                setModalNominateIsOpen(false);
             }
         }
     }
@@ -201,7 +269,9 @@ function ScreenArticleFormContent(props) {
                             </Button>
                         </> : ""}
 
-                    {((article.author === localStorage.getItem("username"))) ?
+                    {((article.author === localStorage.getItem("username")) &&
+                        (localStorage.getItem("role") !== "mod" && localStorage.getItem("role") !== "admin")
+                    ) ?
                         // (localStorage.getItem("role") === "mod") ||
                         // localStorage.getItem("role") === "admin") ?
                         <>
@@ -241,6 +311,16 @@ function ScreenArticleFormContent(props) {
                                 <FontAwesomeIcon icon={faEye} /> Hide
                             </Button>
                         }
+
+                        <Button id="btn-nominate"
+                            type='button'
+                            color='success'
+                            onClick={() => {
+                                toggleModalNominate();
+                            }}
+                        >
+                            Nominate
+                        </Button>
                     </> : ""}
                 </div>
             </div>
@@ -325,6 +405,102 @@ function ScreenArticleFormContent(props) {
             {editPopupOpen ? <EditArticlePopup article={articleDetails} onHandleChange={receiveCancel} /> : ""}
 
             {reportPopupOpen ? <ArticleReportPopup articleId={article.id} onHandleChange={receiveRPCancel} /> : ""}
+
+            <Modal
+                isOpen={modalNominateIsOpen}
+                toggle={toggleModalNominate}
+            >
+                <ModalHeader toggle={toggleModalNominate} >Show article in nominated articles</ModalHeader>
+                <ModalBody>
+                    <Label>
+                        Select position (click):
+                    </Label>
+                    <Row xs="3">
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(1);
+                            }}
+                        >
+                            Position 1
+                        </Col>
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(2);
+                            }}
+                        >
+                            Position 2
+                        </Col>
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(3);
+                            }}
+                        >
+                            Position 3
+                        </Col>
+                    </Row>
+                    <Row xs="3">
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(4);
+                            }}
+                        >
+                            Position 4
+                        </Col>
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(5);
+                            }}
+                        >
+                            Position 5
+                        </Col>
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(6);
+                            }}
+                        >
+                            Position 6
+                        </Col>
+                    </Row>
+                    <Row xs="3">
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(7);
+                            }}
+                        >
+                            Position 7
+                        </Col>
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(8);
+                            }}
+                        >
+                            Position 8
+                        </Col>
+                        <Col className='bg-light border'
+                            onClick={() => {
+                                fetchUpdateNominateArticleWithPosition(9);
+                            }}
+                        >
+                            Position 9
+                        </Col>
+                    </Row>
+                </ModalBody>
+                <ModalFooter>
+                {/* <Button
+                    color="primary"
+                    onClick={() => {
+                        // fetchCreateCategory();
+
+                        toggleModalNominate();
+                    }}
+                >
+                    Submit
+                </Button>{' '} */}
+                <Button color="secondary" onClick={toggleModalNominate}>
+                    Cancel
+                </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     )
 }

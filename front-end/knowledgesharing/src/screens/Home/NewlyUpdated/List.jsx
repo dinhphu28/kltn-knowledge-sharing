@@ -1,12 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'reactstrap';
 // import PropTypes from 'prop-types';
+import newlyArticleApi from '../../../apis/newlyArticleApi';
+import { Link } from 'react-router-dom';
 
 // NewlyUpdatedArticleList.propTypes = {
     
 // };
 
 function NewlyUpdatedArticleList(props) {
+
+    const [listNewlyArticles, setListNewlyArticles] = useState([]);
+
+    useEffect(() => {
+        const fetchListNewlyArticles = async () => {
+            try {
+                const response = await newlyArticleApi.getAll();
+
+                setListNewlyArticles(response);
+
+                console.log("Fetch list newly articles successfully: ", response);
+            } catch (error) {
+                console.log("Failed to fetch list newly articles: ", error);
+            }
+        }
+        
+        fetchListNewlyArticles();
+    }, []);
+
+    const listJsxNewArticleItems = listNewlyArticles.map((item) =>
+        <tr key={item.id}>
+            <th scope="row">
+                <Link to={"/articles/" + item.url}>{item.title}</Link>
+            </th>
+            <td>
+                {item.description}
+            </td>
+            <td>
+                {item.author}
+            </td>
+            <td>
+                {item.categoryName}
+            </td>
+            <td>
+                {item.dateCreated}
+            </td>
+        </tr>
+    );
+
     return (
         <div>
             <h5>
@@ -36,7 +77,7 @@ function NewlyUpdatedArticleList(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    {/* <tr>
                         <th scope="row">
                             <a href="#">ReactJS là gì?</a>
                         </th>
@@ -86,7 +127,8 @@ function NewlyUpdatedArticleList(props) {
                         <td>
                             01/12/2022 15:30
                         </td>
-                    </tr>
+                    </tr> */}
+                    {listJsxNewArticleItems}
                 </tbody>
             </Table>
         </div>

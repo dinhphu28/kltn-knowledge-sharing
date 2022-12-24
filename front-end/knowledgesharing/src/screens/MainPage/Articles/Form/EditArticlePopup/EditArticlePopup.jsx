@@ -4,13 +4,14 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw, convertFromRaw, convertFromHTML, ContentState} from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
-import { Button, Input, Label } from 'reactstrap';
+import { Button, ButtonGroup, Input, Label } from 'reactstrap';
 import { BASE_URL_API_BE } from '../../../../../constants/global';
 import "./EditArticlePopup.css";
 // import PropTypes from 'prop-types';
 import UploadFiles from '../../../../../components/FileUpload/FileUpload';
 import articleApi from '../../../../../apis/articleApi';
 import categoryApi from '../../../../../apis/categoryApi';
+import articleTagApi from '../../../../../apis/articleTagApi';
 
 // EditArticlePopup.propTypes = {
     
@@ -23,11 +24,15 @@ function EditArticlePopup(props) {
     const [description, setDescription] = useState("");
     const [content, setContent] = useState("");
     const [thumbnailUrl, setThumbnailUrl] = useState("");
-    const [audioFileName, setAudioFileName] = useState("");
+    // const [audioFileName, setAudioFileName] = useState("");
     const [category, setCategory] = useState(article.category);
     const [newArticle, setNewArticle] = useState({});
     const [categoryList, setCategoryList] = useState([]);
     const [loaded, setLoaded] = useState(false);
+
+    const [listTagsLoaded, setListTagsLoaded] = useState([]);
+    const [tagsSelected, setTagsSelected] = useState([]);
+
 
     const generateFirstValueForEditorContent = (inpHtmlStr) => {
         const blocksFromHTML = convertFromHTML(inpHtmlStr);
@@ -50,7 +55,7 @@ function EditArticlePopup(props) {
         setDescription(article.description);
         setContent(article.content);
         setThumbnailUrl(article.thumbnailUrl);
-        setAudioFileName(article.audioContent);
+        // setAudioFileName(article.audioContent);
 
         setEditorState(EditorState.createWithContent(generateFirstValueForEditorContent(article.content)));
         // setCategory(article.category);
@@ -71,8 +76,28 @@ function EditArticlePopup(props) {
 
         fetchCategory();
 
+         const fetchListArticleTags = async (categoryId) => {
+            try {
+                const params = {
+                    category: categoryId
+                }
+
+                const response = await articleTagApi.getAll(params);
+
+                setListTagsLoaded(response);
+
+                console.log("Fetch article tags by category successfully: ", response);
+            } catch (error) {
+                console.log("Failed to fetch article tags by category: ", error);
+            }
+        }
+
+        if(category !== null) {
+            fetchListArticleTags(category);
+        }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [category]);
 
     const isInDefaultCategory = (catNameParam) => {
         if(catNameParam === "front-end" ||
@@ -121,6 +146,31 @@ function EditArticlePopup(props) {
             return listItems;
         }
     };
+
+    const onCheckboxBtnClick = (selected) => {
+        const index = tagsSelected.indexOf(selected);
+        if (index < 0) {
+            tagsSelected.push(selected);
+        } else {
+            tagsSelected.splice(index, 1);
+        }
+
+        setTagsSelected([...tagsSelected]);
+      };
+
+    const listJsxTagsLoadedItems = listTagsLoaded.map((item) => 
+        <Button
+            key={item.id}
+            color="info"
+            outline
+            onClick={() => {
+                onCheckboxBtnClick(item.id);
+            }}
+            active={tagsSelected.includes(item.id)}
+        >
+            {item.tagName}
+        </Button>
+    );
 
     const changeInputValueTitle = (e) => {
         setTitle(e.target.value.trim());
@@ -204,7 +254,7 @@ function EditArticlePopup(props) {
     }
 
     const updateArticleToBE = async () => {
-        if(audioFileName !== "") {
+        // if(audioFileName !== "") {
             try {
                 const data = {
                     modifiedBy: localStorage.getItem("username"),
@@ -212,10 +262,10 @@ function EditArticlePopup(props) {
                     title: title,
                     description: description,
                     content: content,
-                    audioContent: audioFileName,
+                    audioContent: "",
                     category: category,
                     thumbnailUrl: thumbnailUrl,
-                    tags: []
+                    tags: tagsSelected
                 };
 
                 console.log("Data to update: ", data);
@@ -227,7 +277,7 @@ function EditArticlePopup(props) {
             } catch(error) {
                 console.log("Failed to post article to BE: ", error);
             }
-        }
+        // }
     }
 
     // const getQueryValueFromLabel = (label) => {
@@ -276,9 +326,9 @@ function EditArticlePopup(props) {
     //     }
     // };
 
-    const receiveAudioUrl = (auFileName) => {
-        setAudioFileName(auFileName);
-    }
+    // const receiveAudioUrl = (auFileName) => {
+    //     setAudioFileName(auFileName);
+    // }
 
     const receiveImageUrl = (imgFileName) => {
         setThumbnailUrl(imgFileName);
@@ -351,7 +401,7 @@ function EditArticlePopup(props) {
                         <UploadFiles onHandleChange={receiveImageUrl} />
                         <hr />
                     </div>
-                    <div className="audio-upload-area my-glob">
+                    {/* <div className="audio-upload-area my-glob">
                         <Label>
                             Old audio file: <a href={BASE_URL_API_BE + "/files/downloadFile/" + article.audioContent}>Download old audio</a>
                         </Label>
@@ -362,7 +412,7 @@ function EditArticlePopup(props) {
                         </Label>
                         <UploadFiles onHandleChange={receiveAudioUrl} />
                         <hr />
-                    </div>
+                    </div> */}
                     <div className="category-area2 my-glob2">
                         <Label>
                             Category:
@@ -377,6 +427,15 @@ function EditArticlePopup(props) {
                         >
                             {loaded ? loadListCategory() : undefined}
                         </Input> : ""}
+                    </div>
+                    <br />
+                    <div>
+                        <Label style={{marginRight: "1rem"}}>
+                            Select tags: 
+                        </Label>
+                        <ButtonGroup>
+                            {listJsxTagsLoadedItems}
+                        </ButtonGroup>
                     </div>
                     <div className="confirm-btn2">
                         <Button id="btn-update2"
