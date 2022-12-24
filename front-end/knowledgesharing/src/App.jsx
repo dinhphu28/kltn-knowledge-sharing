@@ -18,15 +18,24 @@ import ScreenReportCommentList from './screens/Reports/Comment/List';
 import AdminPage from './screens/Admin/AdminPage';
 import ScreenHomePage from './screens/Home/HomePage';
 import { Nav, NavItem, NavLink } from 'reactstrap';
+import ScreenArticleSearchResult from './screens/ArticleSearchResult/List';
 
 
 function App() {
 
   const [reloadToggle, setReloadToggle] = useState(false);
 
+  const [searchStrValue, setSearchStrValue] = useState("");
+
   const receiveReloadToggle = () => {
     setReloadToggle(!reloadToggle);
   };
+
+  const receiveSearchStr = (searchStr) => {
+    // console.log("Received Search String: ", searchStr);
+
+    setSearchStrValue(searchStr);
+  }
 
   // console.log("Location: ", window.location.pathname);
 
@@ -48,13 +57,15 @@ function App() {
       </header> */}
       <Suspense fallback={<div>Loading...</div>}>
         <BrowserRouter>
-          <Header />
+          <Header onHandleChangeSearchStr={receiveSearchStr} />
           
           <Routes>
             <Route path="/home/*" element={<ScreenHomePage />} />
             <Route path="/articles/*" element={<ScreenMainPage />} />
             <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path="/create-article" element={<AddArticle />} />
+
+            <Route path="/search" element={<ScreenArticleSearchResult searchString={searchStrValue} />} />
 
             <Route path="/article-reports" element={<ScreenReportArticleList />} />
             <Route path="/comment-reports" element={<ScreenReportCommentList />} />

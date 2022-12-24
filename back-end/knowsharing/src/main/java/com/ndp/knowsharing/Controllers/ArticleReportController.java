@@ -50,7 +50,7 @@ public class ArticleReportController {
             
             Article article = articleService.retrieveOne(articleReport.getArticleId());
 
-            ArticleReportItemModel tmpARIModel = new ArticleReportItemModel(articleReport.getId(), articleReport.getDateCreated(), articleReport.getArticleId(), article.getAuthor(), articleReport.getContent(), article.getTitle(), article.getUrl(), articleReport.getIsSolved());
+            ArticleReportItemModel tmpARIModel = new ArticleReportItemModel(articleReport.getId(), articleReport.getDateCreated(), articleReport.getArticleId(), articleReport.getAuthor(), articleReport.getContent(), article.getTitle(), article.getUrl(), articleReport.getIsSolved());
 
             articleReportItemModels.add(tmpARIModel);
         }

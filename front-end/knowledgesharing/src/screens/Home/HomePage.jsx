@@ -27,11 +27,11 @@ function ScreenHomePage(props) {
 
             <LeaderBoardList />
 
-            <br/>
+            {/* <br/>
             <hr/>
             <br/>
 
-            <HighEvaluatedArticleList />
+            <HighEvaluatedArticleList /> */}
         </div>
     );
 }

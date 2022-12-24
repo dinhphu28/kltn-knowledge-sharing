@@ -6,6 +6,7 @@ import ReadingList from '../../../components/ReadingList/ReadingList';
 import { useEffect } from 'react';
 import nominatedArticleApi from '../../../apis/nominatedArticleApi';
 import { BASE_URL_API_BE } from '../../../constants/global';
+import { Link } from 'react-router-dom';
 
 // NominatedArticleList.propTypes = {
     
@@ -14,6 +15,7 @@ import { BASE_URL_API_BE } from '../../../constants/global';
 function NominatedArticleList(props) {
 
     const [listNominatedArticles, setListNominatedArticles] = useState([]);
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const fetchListNominatedArticles = async () => {
@@ -23,6 +25,8 @@ function NominatedArticleList(props) {
                 setListNominatedArticles(response);
 
                 console.log("Fetch list nominated articles successfully: ", response);
+
+                setLoaded(true);
             } catch (error) {
                 console.log("Failed to fetch nominated articles: ", error);
             }
@@ -36,35 +40,128 @@ function NominatedArticleList(props) {
         const outerListJsx = [];
         let innerListJsx = [];
 
+        let countRealNomination = 0;
+
         for(let ii = 0; ii < 9; ii++) {
 
-            if(ii < listNominatedArticles.length) {
-                innerListJsx.push(
-                    <Card key={"card-gr" + ii}>
-                        <CardImg
-                            alt="Card image cap"
-                            src={BASE_URL_API_BE + "/files/downloadFile/" + listNominatedArticles[ii].thumbnailUrl}
-                            top
-                            width="100%"
-                            style={{maxHeight: "11rem", objectFit: "cover"}}
-                            // style={{maxWidth: "300px"}}
-                        />
-                        <CardBody>
-                            <CardTitle tag="h5">
-                                {listNominatedArticles[ii].title}
-                            </CardTitle>
-                            <CardSubtitle
-                                className="mb-2 text-muted"
-                                tag="h6"
-                            >
-                                {listNominatedArticles[ii].author}
-                            </CardSubtitle>
-                            <CardText>
-                                {listNominatedArticles[ii].description.length > 15 ? listNominatedArticles[ii].description.substring(0, 75) + "..." : listNominatedArticles[ii].description}
-                            </CardText>
-                        </CardBody>
-                    </Card>
-                );
+            // if(ii < listNominatedArticles.length) {
+            //     innerListJsx.push(
+            //         <Card key={"card-gr" + ii}>
+            //             <CardImg
+            //                 alt="Card image cap"
+            //                 src={BASE_URL_API_BE + "/files/downloadFile/" + listNominatedArticles[ii].thumbnailUrl}
+            //                 top
+            //                 width="100%"
+            //                 style={{maxHeight: "11rem", objectFit: "cover"}}
+            //                 // style={{maxWidth: "300px"}}
+            //             />
+            //             <CardBody>
+            //                 <CardTitle tag="h5">
+            //                     {/* {listNominatedArticles[ii].title} */}
+            //                     <Link to={"/articles/" + listNominatedArticles[ii].url}>{listNominatedArticles[ii].title}</Link>
+            //                 </CardTitle>
+            //                 <CardSubtitle
+            //                     className="mb-2 text-muted"
+            //                     tag="h6"
+            //                 >
+            //                     {listNominatedArticles[ii].author}
+            //                 </CardSubtitle>
+            //                 <CardText>
+            //                     {listNominatedArticles[ii].description.length > 15 ? listNominatedArticles[ii].description.substring(0, 75) + "..." : listNominatedArticles[ii].description}
+            //                 </CardText>
+            //             </CardBody>
+            //         </Card>
+            //     );
+            // } else {
+            //     innerListJsx.push(
+            //         <Card key={"card" + ii}>
+            //             <CardImg
+            //                 alt="Card image cap"
+            //                 src="https://reactjs.org/logo-og.png"
+            //                 top
+            //                 width="100%"
+            //                 style={{maxHeight: "11rem", objectFit: "cover"}}
+            //                 // style={{maxWidth: "300px"}}
+            //             />
+            //             <CardBody>
+            //                 <CardTitle tag="h5">
+            //                     Blank - Position {ii}
+            //                 </CardTitle>
+            //                 <CardSubtitle
+            //                     className="mb-2 text-muted"
+            //                     tag="h6"
+            //                 >
+            //                     Author
+            //                 </CardSubtitle>
+            //                 <CardText>
+            //                     {/* This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. */}
+            //                     Blank content
+            //                 </CardText>
+            //             </CardBody>
+            //         </Card>
+            //     );
+            // }
+
+            if(countRealNomination < listNominatedArticles.length) {
+                if(listNominatedArticles[countRealNomination].id === ("nomination-" + (ii + 1))) {
+                    innerListJsx.push(
+                        <Card key={"card-gr" + ii}>
+                            <CardImg
+                                alt="Card image cap"
+                                src={BASE_URL_API_BE + "/files/downloadFile/" + listNominatedArticles[countRealNomination].thumbnailUrl}
+                                top
+                                width="100%"
+                                style={{maxHeight: "11rem", objectFit: "cover"}}
+                                // style={{maxWidth: "300px"}}
+                            />
+                            <CardBody>
+                                <CardTitle tag="h5">
+                                    {/* {listNominatedArticles[ii].title} */}
+                                    <Link to={"/articles/" + listNominatedArticles[countRealNomination].url}>{listNominatedArticles[countRealNomination].title}</Link>
+                                </CardTitle>
+                                <CardSubtitle
+                                    className="mb-2 text-muted"
+                                    tag="h6"
+                                >
+                                    {listNominatedArticles[countRealNomination].author}
+                                </CardSubtitle>
+                                <CardText>
+                                    {listNominatedArticles[countRealNomination].description.length > 15 ? listNominatedArticles[countRealNomination].description.substring(0, 75) + "..." : listNominatedArticles[countRealNomination].description}
+                                </CardText>
+                            </CardBody>
+                        </Card>
+                    );
+
+                    countRealNomination++;
+                } else {
+                    innerListJsx.push(
+                        <Card key={"card" + ii}>
+                            <CardImg
+                                alt="Card image cap"
+                                src="https://reactjs.org/logo-og.png"
+                                top
+                                width="100%"
+                                style={{maxHeight: "11rem", objectFit: "cover"}}
+                                // style={{maxWidth: "300px"}}
+                            />
+                            <CardBody>
+                                <CardTitle tag="h5">
+                                    Blank - Position {ii}
+                                </CardTitle>
+                                <CardSubtitle
+                                    className="mb-2 text-muted"
+                                    tag="h6"
+                                >
+                                    Author
+                                </CardSubtitle>
+                                <CardText>
+                                    {/* This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. */}
+                                    Blank content
+                                </CardText>
+                            </CardBody>
+                        </Card>
+                    );
+                }
             } else {
                 innerListJsx.push(
                     <Card key={"card" + ii}>

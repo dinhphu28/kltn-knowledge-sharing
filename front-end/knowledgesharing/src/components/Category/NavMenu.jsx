@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DropdownItem, Nav, NavItem, NavLink } from 'reactstrap';
 import categoryApi from '../../apis/categoryApi';
 import './NavMenu.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import PropTypes from 'prop-types';
 
 // CategoryNavMenu.propTypes = {
@@ -13,6 +14,18 @@ function CategoryNavMenu(props) {
     const [categoryList, setCategoryList] = useState([]);
     const [loaded, setLoaded] = useState(false);
     const [category, setCategory] = useState({id: undefined, name: "Newest"});
+
+    let navigate = useNavigate();
+    const location = useLocation();
+    // console.log("ZZ location: ", location.pathname);
+
+    const checkIfIsInArticleContent = () => {
+        if(location.pathname.substring(0, 10) === "/articles/" && location.pathname.length > 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -50,6 +63,10 @@ function CategoryNavMenu(props) {
                             if(category.id !== item.id) {
                                 setCategory(item);
                                 props.onHandleChangeCat(item);
+                            }
+
+                            if(checkIfIsInArticleContent()) {
+                                navigate("/articles");
                             }
                         }}
                     >

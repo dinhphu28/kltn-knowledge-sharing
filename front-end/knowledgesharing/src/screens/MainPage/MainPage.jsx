@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { Button, Input, InputGroup } from 'reactstrap';
 import articleApi from '../../apis/articleApi';
 import CategoryNavMenu from '../../components/Category/NavMenu';
 import ScreenArticleFormContent from './Articles/Form/Content';
@@ -151,14 +150,14 @@ function ScreenMainPage(props) {
         <div style={{marginLeft: "2rem", marginRight: "2rem"}}>
             <CategoryNavMenu onHandleChangeCat={receiveCategory} onHandleChangeHid={receiveHidden} />
 
-            <div className='col-4' style={{display: "inline-block", margin: "1rem", marginLeft: "2rem"}}>
+            {/* <div className='col-4' style={{display: "inline-block", margin: "1rem", marginLeft: "2rem"}}>
                 <InputGroup>
                     <Input />
                     <Button>
                         Search
                     </Button>
                 </InputGroup>
-            </div>
+            </div> */}
 
             <Routes>
                 {/* <Route path="/meo" element={<SignUpPage />} /> */}
