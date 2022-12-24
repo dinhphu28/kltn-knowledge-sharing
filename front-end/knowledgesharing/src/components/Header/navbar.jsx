@@ -16,8 +16,8 @@ import profileApi from '../../apis/profileApi';
 function SignInUpNav(props) {
     return (
         <>
-            <NavLink style={{color: "#0d6efd"}} href="/sign-in">Sign In </NavLink>
-            <NavLink href="/sign-up" style={{marginLeft: "1rem", color: "#0d6efd"}}>Sign Up</NavLink>
+            <NavLink style={{color: "#0d6efd", whiteSpace: "nowrap"}} href="/sign-in">Sign In</NavLink>
+            <NavLink href="/sign-up" style={{marginLeft: "1rem", color: "#0d6efd", whiteSpace: "nowrap"}}>Sign Up</NavLink>
         </>
     );
 }
@@ -168,7 +168,7 @@ function NavBar(props) {
                     </NavItem>
                 </Nav>
 
-                <InputGroup style={{marginLeft: "20rem", marginRight: "3rem"}}>
+                <InputGroup style={{marginLeft: "10%", marginRight: "3%"}}>
                     <Input
                         onChange={e => changeSearchInputValue(e)}
                     />
