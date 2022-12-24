@@ -20,7 +20,8 @@ function ScreenArticleSearchResult(props) {
         const fetchListArticlesSearchResult = async () => {
             try {
                 const params = {
-                    q: searchStrVal
+                    q: searchStrVal,
+                    page: page
                 }
 
                 console.log("DT search: ", params);
@@ -39,7 +40,7 @@ function ScreenArticleSearchResult(props) {
         }
 
         fetchListArticlesSearchResult();
-    }, [searchStrVal]);
+    }, [page, searchStrVal]);
 
     const receivePage = (indexPage) => {
         setPage(indexPage);
@@ -53,10 +54,12 @@ function ScreenArticleSearchResult(props) {
     return (
         <div>
             <div>
-                Showing results for: {searchStrVal}
+                <h6 style={{marginLeft: "2rem"}}>Showing results for: {searchStrVal}</h6>
             </div>
             
-            {listItems}
+            <div style={{marginLeft: "2rem", marginRight: "2rem"}}>
+                {listItems}
+            </div>
 
             <PaginationBar
                 numberOfPages={articlesCrude.numberOfPages}
