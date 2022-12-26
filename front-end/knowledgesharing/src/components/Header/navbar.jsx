@@ -187,7 +187,7 @@ function NavBar(props) {
 
                 {(localStorage.getItem("role") === "norm" || localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <AddArticleBtn /> : ""}
                 {(localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <ReportManBtn /> : ""}
-                {(localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <AdminManBtn /> : ""}
+                {(localStorage.getItem("role") === "admin") ? <AdminManBtn /> : ""}
                 
                 {(localStorage.getItem("username") !== null) ? <UserAvtNav onHandleChange={receiveData} /> : <SignInUpNav />}
 

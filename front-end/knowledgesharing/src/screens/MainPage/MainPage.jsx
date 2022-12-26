@@ -50,7 +50,10 @@ function ScreenMainPage(props) {
 
         const fetchArticleByUrl = async () => {
             try {
-                const response = await articleApi.getByUrl(location.pathname.substring(10));
+                const params = {
+                    hidden: ((localStorage.getItem("role") === "mod") || localStorage.getItem("role") === "admin") ? false : true
+                }
+                const response = await articleApi.getByUrl(location.pathname.substring(10), params);
 
                 console.log("Fetch article by URL successfully: ", response);
 
@@ -172,10 +175,14 @@ function ScreenMainPage(props) {
                             category={category}
                             // // page={page}
                             onHandleChange={receivePage}
+                            onHandleChangeHid={receiveHidden}
                         /> : <p>Loading...</p>}
                 />
 
                 {loadListRoute()}
+
+                {/* {((localStorage.getItem("role") === "mod") || localStorage.getItem("role") === "admin") ? "" : ""} */}
+
                 {loaded2 && location.pathname !== "/articles" ? redundantArticleByUrlRoute() : ""}
                 {/* {redundantArticleByUrlRoute()} */}
 

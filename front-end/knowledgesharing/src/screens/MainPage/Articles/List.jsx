@@ -3,7 +3,7 @@ import { useState } from 'react';
 import articleApi from '../../../apis/articleApi';
 import ArticleCard from './List/Item/ArticleCard';
 import PaginationBar from './List/Pagination/PaginationBar';
-import { Button, Card, CardBody, Collapse, Input } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardBody, Collapse, Input } from 'reactstrap';
 import articleTagApi from '../../../apis/articleTagApi';
 import "./ScreenArticleList.css"
 // import PropTypes from 'prop-types';
@@ -127,6 +127,7 @@ function ScreenArticleList(props) {
                         <Card>
                             <CardBody>
                                 <Input
+                                    style={{marginBottom: "0.5rem"}}
                                     multiple
                                     type='select'
                                     onChange={e => {
@@ -162,7 +163,26 @@ function ScreenArticleList(props) {
                     : ""}
                 </div>
                 <div className='my-flex-sec-right'>
-
+                    <ButtonGroup style={{display: "flex", justifyContent: "space-between", marginLeft: "55%"}}>
+                        <Button
+                            color={hidden ? "secondary" : "primary"}
+                            onClick={() => {
+                                setHidden(false);
+                                props.onHandleChangeHid(false);
+                            }}
+                        >
+                            Shown article
+                        </Button>
+                        <Button
+                            color={hidden ? "primary" : "secondary"}
+                            onClick={() => {
+                                setHidden(true);
+                                props.onHandleChangeHid(true);
+                            }}
+                        >
+                            Hidden article
+                        </Button>
+                    </ButtonGroup>
                 </div>
             </div>
             

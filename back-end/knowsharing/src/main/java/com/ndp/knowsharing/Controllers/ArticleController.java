@@ -29,6 +29,7 @@ import com.ndp.knowsharing.Models.Article.ArticleItemReturnModel;
 import com.ndp.knowsharing.Models.Article.ArticleUpdateModel;
 import com.ndp.knowsharing.Models.Article.PageOfArticleModel;
 import com.ndp.knowsharing.Models.Comment.CommentCreateModel;
+import com.ndp.knowsharing.Models.Comment.CommentHideShowModel;
 import com.ndp.knowsharing.Models.UserVoteState.UVSReturnModel;
 import com.ndp.knowsharing.Models.UserVoteState.UVSUpdateModel;
 import com.ndp.knowsharing.Services.ArticleService;
@@ -310,23 +311,43 @@ public class ArticleController {
         value = "/by-url/{url}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> retrieveByUrl(@PathVariable("url") String url) {
+    public ResponseEntity<Object> retrieveByUrl(@PathVariable("url") String url, @RequestParam(value = "hidden", required = true) Boolean shouldHidden) {
         ResponseEntity<Object> entity;
 
         List<Article> articles = articleService.retrieveByUrl(url);
 
         if(articles.size() > 0) {
-            List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articles.get(0).getId());
 
-            Integer voteScore = 0;
+            if(shouldHidden) {
+                if(articles.get(0).getHidden() == 0) {
+                    List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articles.get(0).getId());
+    
+                    Integer voteScore = 0;
+    
+                    for(UserVoteState uvsItem : userVoteStates) {
+                        voteScore = voteScore + uvsItem.getVoteState();
+                    }
+    
+                    ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articles.get(0), voteScore);
+    
+                    entity = new ResponseEntity<>(articleItemReturnModel, HttpStatus.OK);
+                } else {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+                }
+            } else {
+                List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(articles.get(0).getId());
+    
+                Integer voteScore = 0;
 
-            for(UserVoteState uvsItem : userVoteStates) {
-                voteScore = voteScore + uvsItem.getVoteState();
+                for(UserVoteState uvsItem : userVoteStates) {
+                    voteScore = voteScore + uvsItem.getVoteState();
+                }
+
+                ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articles.get(0), voteScore);
+
+                entity = new ResponseEntity<>(articleItemReturnModel, HttpStatus.OK);
             }
-
-            ArticleItemReturnModel articleItemReturnModel = new ArticleItemReturnModel(articles.get(0), voteScore);
-
-            entity = new ResponseEntity<>(articleItemReturnModel, HttpStatus.OK);
+            
         } else {
             entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
         }
@@ -554,6 +575,43 @@ public class ArticleController {
                 entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.BAD_REQUEST);
             } else {
                 entity = new ResponseEntity<>(tmpSaved, HttpStatus.CREATED);
+            }
+        }
+
+        return entity;
+    }
+
+    @PutMapping(
+        value = "/{articleId}/comments/{commentId}/hide",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> hideShowComment(@PathVariable("articleId") String articleId, @PathVariable("commentId") String commentId, @RequestBody CommentHideShowModel commentHideShowModel) {
+        ResponseEntity<Object> entity;
+
+        if(commentHideShowModel.getHidden() == null) {
+            entity = new ResponseEntity<>("{ \"Notice\": \"Not allow null\" }", HttpStatus.BAD_REQUEST);
+        } else {
+            Article tmpArticle = articleService.retrieveOne(articleId);
+
+            if(tmpArticle == null) {
+                entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+            } else {
+                Comment tmpComment = commentService.retrieveById(commentId);
+
+                if(tmpComment == null) {
+                    entity = new ResponseEntity<>("{ \"Notice\": \"Not found\" }", HttpStatus.NOT_FOUND);
+                } else {
+                    tmpComment.setHidden(commentHideShowModel.getHidden() ? 1 : 0);
+
+                    Comment tmpSaved = commentService.updateOne(tmpComment);
+
+                    if(tmpSaved == null) {
+                        entity = new ResponseEntity<>("{ \"Notice\": \"Failed\" }", HttpStatus.INTERNAL_SERVER_ERROR);
+                    } else {
+                        entity = new ResponseEntity<>(tmpSaved, HttpStatus.OK);
+                    }
+                }
             }
         }
 
