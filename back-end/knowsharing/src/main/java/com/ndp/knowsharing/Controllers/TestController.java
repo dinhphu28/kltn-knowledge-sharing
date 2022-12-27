@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ndp.knowsharing.Entities.Article;
+import com.ndp.knowsharing.Entities.ArticleVoteScore;
 import com.ndp.knowsharing.Services.ArticleService;
+import com.ndp.knowsharing.Services.ArticleVoteScoreService;
 
 @RestController
 @CrossOrigin("*")
@@ -23,23 +25,19 @@ public class TestController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private ArticleVoteScoreService articleVoteScoreService;
+
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> retrieveAllArticlesWithTagIds(@RequestParam(value = "page", required = true) Integer pageNumber, @RequestParam(value = "tagids", required = true) List<String> tagIds) {
+    public ResponseEntity<Object> retrieveTop3ArticleHighestVoteScore() {
         ResponseEntity<Object> entity;
 
-        // List<String> tagIds = new ArrayList<String>();
-        // tagIds.add("7f7e3bc7-6c50-4b5c-87da-b602d964e12d");
-        // tagIds.add("204c375e-eb40-49de-a556-b751899723d4");
+        List<ArticleVoteScore> articleVoteScores = articleVoteScoreService.retrieveTop3ArticleHighestVoteScore();
+        
 
-        String categoryId = "05f15fb9-737b-4a44-a424-168f04d474c8";
-
-        List<Article> articles = articleService.retrieveOnePageByCategoryAndHiddenWithTagIds(tagIds, pageNumber, categoryId, 0);
-        // Integer articles = articleService.retrieveOneCommonPageWithTags(tagIds, pageNumber);
-
-
-        entity = new ResponseEntity<>(articles, HttpStatus.OK);
+        entity = new ResponseEntity<>(articleVoteScores, HttpStatus.OK);
 
         return entity;
     }
