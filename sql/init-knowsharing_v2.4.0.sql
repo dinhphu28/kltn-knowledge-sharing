@@ -272,7 +272,7 @@ create table app_fd_sys_notification (
     createdBy varchar(255),
     createdByName varchar(255),
     c_title varchar(255),
-    content longtext,
+    c_content longtext,
     c_hidden int default 0 not null
 );
 
@@ -283,7 +283,7 @@ create table app_fd_user_notification (
     createdByName varchar(255),
     c_for_user varchar(255) not null,
     c_title varchar(255),
-    content longtext,
+    c_content longtext,
     c_hidden int default 0 not null,
 
     constraint FK927C3A61E3F24309BBAD4DB7558A5742
