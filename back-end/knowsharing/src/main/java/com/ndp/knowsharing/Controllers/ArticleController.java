@@ -359,14 +359,36 @@ public class ArticleController {
         value = "/search",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> searchArticles(@RequestParam(value = "q", required = true) String q, @RequestParam(value = "page", required = true) Integer pageNum) {
+    public ResponseEntity<Object> searchArticles(@RequestParam(value = "q", required = true) String q, @RequestParam(value = "category", required = false) String category, @RequestParam(value = "from", required = false) String from, @RequestParam(value = "to", required = false) String to, @RequestParam(value = "page", required = true) Integer pageNum) {
         ResponseEntity<Object> entity;
 
         PageOfArticleModel pageOfArticleModel = new PageOfArticleModel();
 
         List<ArticleItemReturnModel> articleItemReturnModels = new ArrayList<ArticleItemReturnModel>();
 
-        List<Article> articles = articleService.retrieveWithFullTextSearchByTitleAndDescriptionAndContent(q, pageNum);
+        List<Article> articles;
+
+        if(category == null) {
+            if(from == null || to == null) {
+                articles = articleService.retrieveWithFullTextSearchByTitleAndDescriptionAndContent(q, pageNum);  // search here
+
+                pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContent(q).intValue());  // retrieve pages here
+            } else {
+                articles = articleService.retrieveWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(q, from, to, pageNum);  // search here
+
+                pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(q, from, to).intValue()); // retrieve pages here
+            }
+        } else {
+            if(from == null || to == null) {
+                articles = articleService.retrieveWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(q, category, pageNum);  // search here
+
+                pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(q, category).intValue());  // retrieve pages here
+            } else {
+                articles = articleService.retrieveWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(q, from, to, category, pageNum);  // search here
+
+                pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(q, from, to, category).intValue()); // retrieve pages here
+            }
+        }
 
         for (Article article : articles) {
             List<UserVoteState> userVoteStates = userVoteStateService.retrieveByArticleId(article.getId());
@@ -382,7 +404,7 @@ public class ArticleController {
             articleItemReturnModels.add(articleItemReturnModel);
         }
 
-        pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContent(q).intValue());
+        // pageOfArticleModel.setNumberOfPages(articleService.retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContent(q).intValue());  // retrieve pages here
         pageOfArticleModel.setCurrentPage(0);
         pageOfArticleModel.setArticles(articleItemReturnModels);
 
