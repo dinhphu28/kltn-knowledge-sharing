@@ -43,6 +43,48 @@ public class ArticleService {
         return articles;
     }
 
+    public List<Article> retrieveWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(String searchStr, String categoryId, Integer pageNumber) {
+        List<Article> articles = new ArrayList<Article>();
+
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(searchStr, categoryId, PageRequest.of(pageNumber, 10));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
+    public List<Article> retrieveWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(String searchStr, String from, String to, Integer pageNumber) {
+        List<Article> articles = new ArrayList<Article>();
+
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(searchStr, from, to, PageRequest.of(pageNumber, 10));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
+    public List<Article> retrieveWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(String searchStr, String from, String to, String categoryId, Integer pageNumber) {
+        List<Article> articles = new ArrayList<Article>();
+
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(searchStr, from, to, categoryId, PageRequest.of(pageNumber, 10));
+
+            articles = page.getContent();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return articles;
+    }
+
     public List<Article> retrieveOneCommonPage(Integer pageNumber) {
         Page<Article> page = repo.findAll(PageRequest.of(pageNumber, 10, Sort.by("dateCreated").descending()));
 
@@ -203,6 +245,48 @@ public class ArticleService {
         
         try {
             Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContent(searchStr, PageRequest.of(0, 10));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
+    }
+
+    public Long retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(String searchStr, String categoryId) {
+        Long numOfPage = Long.valueOf(0);
+
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(searchStr, categoryId, PageRequest.of(0, 10));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
+    }
+
+    public Long retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(String searchStr, String from, String to) {
+        Long numOfPage = Long.valueOf(0);
+
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(searchStr, from, to, PageRequest.of(0, 10));
+
+            numOfPage = Long.valueOf(page.getTotalPages());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return numOfPage;
+    }
+
+    public Long retrieveNumOfPagesWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(String searchStr, String from, String to, String categoryId) {
+        Long numOfPage = Long.valueOf(0);
+
+        try {
+            Page<Article> page = repo.findWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(searchStr, from, to, categoryId, PageRequest.of(0, 10));
 
             numOfPage = Long.valueOf(page.getTotalPages());
         } catch (Exception e) {

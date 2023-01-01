@@ -19,6 +19,7 @@ import AdminPage from './screens/Admin/AdminPage';
 import ScreenHomePage from './screens/Home/HomePage';
 import { Nav, NavItem, NavLink } from 'reactstrap';
 import ScreenArticleSearchResult from './screens/ArticleSearchResult/List';
+import ScreenNotificationList from './screens/Notification/List';
 
 
 function App() {
@@ -26,15 +27,20 @@ function App() {
   const [reloadToggle, setReloadToggle] = useState(false);
 
   const [searchStrValue, setSearchStrValue] = useState("");
+  const [searchFiltersValue, setSearchFiltersValue] = useState({category: undefined, from: undefined, to: undefined});
 
   const receiveReloadToggle = () => {
     setReloadToggle(!reloadToggle);
   };
 
   const receiveSearchStr = (searchStr) => {
-    // console.log("Received Search String: ", searchStr);
+    console.log("Received Search String: ", searchStr);
 
     setSearchStrValue(searchStr);
+  }
+  const receiveFilters = (searchFilters) => {
+    console.log("Received Search Filters: ", searchFilters);
+    setSearchFiltersValue(searchFilters);
   }
 
   // console.log("Location: ", window.location.pathname);
@@ -57,7 +63,7 @@ function App() {
       </header> */}
       <Suspense fallback={<div>Loading...</div>}>
         <BrowserRouter>
-          <Header onHandleChangeSearchStr={receiveSearchStr} />
+          <Header onHandleChangeSearchStr={receiveSearchStr} onHandleChangeSearchFilters={receiveFilters} />
           
           <Routes>
             <Route path="/home/*" element={<ScreenHomePage />} />
@@ -65,7 +71,7 @@ function App() {
             <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path="/create-article" element={<AddArticle />} />
 
-            <Route path="/search" element={<ScreenArticleSearchResult searchString={searchStrValue} />} />
+            <Route path="/search" element={<ScreenArticleSearchResult searchString={searchStrValue} searchFilters={searchFiltersValue} />} />
 
             <Route path="/article-reports" element={<ScreenReportArticleList />} />
             <Route path="/comment-reports" element={<ScreenReportCommentList />} />
@@ -76,6 +82,7 @@ function App() {
             <Route path="/change-password" element={<ChangePassword />} />
 
             <Route path="/profile" element={<ScreenFormProfile />} />
+            <Route path="/notification" element={<ScreenNotificationList />} />
 
             <Route path="/admin/*" element={<AdminPage />} />
 

@@ -51,6 +51,21 @@ public class CommentService {
         return tmp;
     }
 
+    public Comment updateOne(Comment comment) {
+        Comment tmpComment = null;
+
+        try {
+            repo.findById(comment.getId()).get();
+
+            tmpComment = repo.save(comment);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+
+        return tmpComment;
+    }
+
+
     public Boolean deleteById(String id) {
         Boolean isSuccess = false;
 

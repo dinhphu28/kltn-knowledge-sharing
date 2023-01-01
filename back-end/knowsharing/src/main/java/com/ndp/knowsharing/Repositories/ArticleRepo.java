@@ -68,4 +68,32 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     )
     Page<Article> findWithFullTextSearchByTitleAndDescriptionAndContent(@Param("searchstr") String searchStr, Pageable pageable);
     // List<Article> findWithFullTextSearchByTitleAndDescriptionAndContent(@Param("searchstr") String searchStr);
+
+    String query6 = "select a.id, a.dateCreated, a.dateModified, a.createdBy, a.createdByName, a.modifiedBy, a.modifiedByName, a.c_title, a.c_description, a.c_content, a.c_audio_content, a.c_author, a.c_url, a.c_category, a.c_thumbnail_url, a.c_hidden from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr ) and c_category = :category ";
+    String countQuery6 = "select count(a.id) from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr ) and c_category = :category ";
+    @Query(
+        value = query6,
+        countQuery = countQuery6,
+        nativeQuery = true
+    )
+    Page<Article> findWithFullTextSearchByTitleAndDescriptionAndContentAndByCategory(@Param("searchstr") String searchStr, @Param("category") String categoryId, Pageable pageable);
+    
+
+    String query7 = "select a.id, a.dateCreated, a.dateModified, a.createdBy, a.createdByName, a.modifiedBy, a.modifiedByName, a.c_title, a.c_description, a.c_content, a.c_audio_content, a.c_author, a.c_url, a.c_category, a.c_thumbnail_url, a.c_hidden from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr ) and ( date(dateCreated) >= :from and date(dateCreated) <= :to ) ";
+    String countQuery7 = "select count(a.id) from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr ) and ( date(dateCreated) >= :from and date(dateCreated) <= :to ) ";
+    @Query(
+        value = query7,
+        countQuery = countQuery7,
+        nativeQuery = true
+    )
+    Page<Article> findWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetween(@Param("searchstr") String searchStr, @Param("from") String from, @Param("to") String to, Pageable pageable);
+
+    String query8 = "select a.id, a.dateCreated, a.dateModified, a.createdBy, a.createdByName, a.modifiedBy, a.modifiedByName, a.c_title, a.c_description, a.c_content, a.c_audio_content, a.c_author, a.c_url, a.c_category, a.c_thumbnail_url, a.c_hidden from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr ) and ( date(dateCreated) >= :from and date(dateCreated) <= :to ) and c_category = :category ";
+    String countQuery8 = "select count(a.id) from app_fd_article as a where match(a.c_title, a.c_description, a.c_content) against ( :searchstr ) and ( date(dateCreated) >= :from and date(dateCreated) <= :to ) and c_category = :category ";
+    @Query(
+        value = query8,
+        countQuery = countQuery8,
+        nativeQuery = true
+    )
+    Page<Article> findWithFullTextSearchByTitleAndDescriptionAndContentAndByDateCreatedBetweenAndCategory(@Param("searchstr") String searchStr, @Param("from") String from, @Param("to") String to, @Param("category") String categoryId, Pageable pageable);
 }

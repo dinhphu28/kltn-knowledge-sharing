@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Collapse, DropdownItem, DropdownMenu, DropdownToggle, Input, InputGroup, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from 'reactstrap';
+import { Button, Collapse, DropdownItem, DropdownMenu, DropdownToggle, Input, InputGroup, Label, Modal, ModalBody, ModalFooter, ModalHeader, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from 'reactstrap';
 import AddArticleBtn from './addArticleBtn';
 import "./navbarStyles.css"
 import ReportManBtn from './reportManBtn';
@@ -8,6 +8,8 @@ import ReportManBtn from './reportManBtn';
 import AdminManBtn from './adminManBtn';
 import { BASE_URL_API_BE } from '../../constants/global';
 import profileApi from '../../apis/profileApi';
+import categoryApi from '../../apis/categoryApi';
+import NotificationBtn from './NotificationBtn';
 
 // navbar.propTypes = {
     
@@ -16,8 +18,8 @@ import profileApi from '../../apis/profileApi';
 function SignInUpNav(props) {
     return (
         <>
-            <NavLink style={{color: "#0d6efd"}} href="/sign-in">Sign In </NavLink>
-            <NavLink href="/sign-up" style={{marginLeft: "1rem", color: "#0d6efd"}}>Sign Up</NavLink>
+            <NavLink style={{color: "#0d6efd", whiteSpace: "nowrap"}} href="/sign-in">Sign In</NavLink>
+            <NavLink href="/sign-up" style={{marginLeft: "1rem", color: "#0d6efd", whiteSpace: "nowrap"}}>Sign Up</NavLink>
         </>
     );
 }
@@ -111,6 +113,12 @@ function NavBar(props) {
     const [reloadToggle, setReloadToggle] = useState(false);
     
     const [searchStrValue, setSearchStrValue] = useState("");
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    const [categoryList, setCategoryList] = useState([]);
+    const [category, setCategory] = useState(undefined);
+    const [from, setFrom] = useState(undefined);
+    const [to, setTo] = useState(undefined);
 
     let navigate = useNavigate();
 
@@ -121,6 +129,50 @@ function NavBar(props) {
     const changeSearchInputValue = (e) => {
         setSearchStrValue(e.target.value);
     }
+    const toggleModal = () => {
+        setModalIsOpen(!modalIsOpen);
+    }
+    const changeInputValueCategory = (e) => {
+        setCategory(e.target.value);
+    };
+    const changeInputFrom = (e) => {
+        setFrom(e.target.value);
+    }
+    const changeInputTo = (e) => {
+        setTo(e.target.value);
+    }
+
+    const fetchCategory = async () => {
+        try {
+            const response = await categoryApi.getAll();
+
+            console.log("Fetch category successfully: ", response);
+
+            setCategoryList(response);
+
+            // if(category === null) {
+            //     setCategory(response[0].id);
+            // }
+
+        } catch (error) {
+            console.log("Failed to fetch category: ", error);
+        }
+    }
+
+    const loadListCategory = () => {
+        const listItems = categoryList.map((item) => {
+            return (
+                <option
+                    key={item.id}
+                    value={item.id}
+                >
+                    {item.name}
+                </option>
+            )
+        });
+
+        return listItems;
+    };
 
     return (
         <div className="my-navbar">
@@ -168,13 +220,33 @@ function NavBar(props) {
                     </NavItem>
                 </Nav>
 
-                <InputGroup style={{marginLeft: "20rem", marginRight: "3rem"}}>
+                <InputGroup style={{marginLeft: "10%", marginRight: "3%"}}>
                     <Input
+                        placeholder="Type and click search"
                         onChange={e => changeSearchInputValue(e)}
                     />
                     <Button
+                        outline
                         onClick={() => {
+                            fetchCategory();
+
+                            toggleModal();
+                        }}
+                    >
+                        Show filters
+                    </Button>
+                    <Button
+                        // outline
+                        onClick={() => {
+
+                            const searchFilters = {
+                                category: category,
+                                from: from,
+                                to: to
+                            }
+
                             props.onHandleChangeSearchStr(searchStrValue);
+                            props.onHandleChangeSearchFilters(searchFilters);
 
                             navigate("/search");
                         }}
@@ -185,9 +257,10 @@ function NavBar(props) {
 
                 {/* <AddArticleBtn /> */}
 
+                {(localStorage.getItem("role") === "norm" || localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <NotificationBtn /> : ""}
                 {(localStorage.getItem("role") === "norm" || localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <AddArticleBtn /> : ""}
                 {(localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <ReportManBtn /> : ""}
-                {(localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <AdminManBtn /> : ""}
+                {(localStorage.getItem("role") === "admin") ? <AdminManBtn /> : ""}
                 
                 {(localStorage.getItem("username") !== null) ? <UserAvtNav onHandleChange={receiveData} /> : <SignInUpNav />}
 
@@ -198,6 +271,64 @@ function NavBar(props) {
                 </NavbarText>
                 </Collapse>
             </Navbar>
+
+            <Modal
+                isOpen={modalIsOpen}
+                toggle={toggleModal}
+            >
+                <ModalHeader toggle={toggleModal} >Create new category</ModalHeader>
+                <ModalBody>
+                    <Label>
+                        Category:
+                    </Label>
+                    <Input
+                        type="select"
+                        name="category"
+                        onChange={e => changeInputValueCategory(e)}
+                        defaultValue={category}
+                    >
+                        <option
+                            value={null}
+                        >
+                            -- Select --
+                        </option>
+                        {categoryList.length > 0 ? loadListCategory() : undefined}
+                    </Input>
+                    <Label>
+                        From:
+                    </Label>
+                    <Input
+                        type="date"
+                        onChange={e => changeInputFrom(e)}
+                        defaultValue={from}
+                    />
+                    <Label>
+                        To:
+                    </Label>
+                    <Input
+                        type="date"
+                        onChange={e => changeInputTo(e)}
+                        defaultValue={to}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                <Button
+                    color="primary"
+                    onClick={() => {
+                        console.log("Search Fitler - Category: ", category);
+                        console.log("Search Fitler - From: ", from);
+                        console.log("Search Fitler - To: ", to);
+
+                        toggleModal();
+                    }}
+                >
+                    Submit
+                </Button>{' '}
+                <Button color="secondary" onClick={toggleModal}>
+                    Cancel
+                </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     );
 }
