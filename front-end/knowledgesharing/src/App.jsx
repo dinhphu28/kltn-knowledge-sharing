@@ -19,6 +19,7 @@ import AdminPage from './screens/Admin/AdminPage';
 import ScreenHomePage from './screens/Home/HomePage';
 import { Nav, NavItem, NavLink } from 'reactstrap';
 import ScreenArticleSearchResult from './screens/ArticleSearchResult/List';
+import ScreenNotificationList from './screens/Notification/List';
 
 
 function App() {
@@ -81,6 +82,7 @@ function App() {
             <Route path="/change-password" element={<ChangePassword />} />
 
             <Route path="/profile" element={<ScreenFormProfile />} />
+            <Route path="/notification" element={<ScreenNotificationList />} />
 
             <Route path="/admin/*" element={<AdminPage />} />
 

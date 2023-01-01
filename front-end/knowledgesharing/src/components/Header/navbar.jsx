@@ -9,6 +9,7 @@ import AdminManBtn from './adminManBtn';
 import { BASE_URL_API_BE } from '../../constants/global';
 import profileApi from '../../apis/profileApi';
 import categoryApi from '../../apis/categoryApi';
+import NotificationBtn from './NotificationBtn';
 
 // navbar.propTypes = {
     
@@ -256,6 +257,7 @@ function NavBar(props) {
 
                 {/* <AddArticleBtn /> */}
 
+                {(localStorage.getItem("role") === "norm" || localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <NotificationBtn /> : ""}
                 {(localStorage.getItem("role") === "norm" || localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <AddArticleBtn /> : ""}
                 {(localStorage.getItem("role") === "mod" || localStorage.getItem("role") === "admin") ? <ReportManBtn /> : ""}
                 {(localStorage.getItem("role") === "admin") ? <AdminManBtn /> : ""}

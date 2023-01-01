@@ -11,6 +11,7 @@ import UploadFiles from '../../../../components/FileUpload/FileUpload';
 import { useNavigate } from 'react-router-dom';
 // import PropTypes from 'prop-types';
 import articleTagApi from '../../../../apis/articleTagApi';
+import { BASE_URL_API_BE } from '../../../../constants/global';
 
 // AddArticle.propTypes = {
     
@@ -28,6 +29,8 @@ function AddArticle(props) {
 
     const [listTagsLoaded, setListTagsLoaded] = useState([]);
     const [tagsSelected, setTagsSelected] = useState([]);
+
+    const [fileUrl, setFileUrl] = useState("");
 
     let navigate = useNavigate();
 
@@ -349,6 +352,16 @@ function AddArticle(props) {
         setThumbnailUrl(imgFileName);
     }
 
+    const receiveFileUrl = (fileName) => {
+        setFileUrl(fileName);
+    }
+
+    const copyTextToClipboard = (textInput) => {
+        navigator.clipboard.writeText(textInput);
+
+        alert("Copied: " + textInput);
+    }
+
     return (
         <div>
             <form
@@ -378,16 +391,31 @@ function AddArticle(props) {
                         onChange={e => changeInputValueDescription(e)}
                     />
                 </div>
+                
                 <div className="content-area my-glob">
                     <Label>
                         Content:
                     </Label>
+                    <hr />
+                    <Label>
+                        Upload file and get link: 
+                    </Label>
+                    <Button
+                        outline
+                        color="primary"
+                        style={{marginLeft: "0.5rem"}}
+                        onClick={() => {
+                            copyTextToClipboard(BASE_URL_API_BE + "/files/downloadFile/" + fileUrl);
+                        }}
+                    >
+                        Copy
+                    </Button>
+                    <UploadFiles onHandleChange={receiveFileUrl} />
                     {/* <Input
                         type="textarea"
                         name="content"
                         onChange={e => changeInputValueContent(e)}
                     /> */}
-                    <hr />
                     <Editor
                         // initialContentState={{"contentState"}}
                         editorState={editorState}
