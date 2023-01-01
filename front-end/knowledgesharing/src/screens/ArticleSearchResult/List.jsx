@@ -11,6 +11,8 @@ import PaginationBar from '../MainPage/Articles/List/Pagination/PaginationBar';
 function ScreenArticleSearchResult(props) {
 
     const searchStrVal = props.searchString;
+    const searchFiltersVal = props.searchFilters;
+    console.log("SR Search filters: ", searchFiltersVal);
 
     const [articlesCrude, setArticlesCrude] = useState({});
     const [loaded, setLoaded] = useState(false);
@@ -21,6 +23,9 @@ function ScreenArticleSearchResult(props) {
             try {
                 const params = {
                     q: searchStrVal,
+                    category: searchFiltersVal.category,
+                    from: searchFiltersVal.from,
+                    to: searchFiltersVal.to,
                     page: page
                 }
 
@@ -40,7 +45,7 @@ function ScreenArticleSearchResult(props) {
         }
 
         fetchListArticlesSearchResult();
-    }, [page, searchStrVal]);
+    }, [page, searchFiltersVal.category, searchFiltersVal.from, searchFiltersVal.to, searchStrVal]);
 
     const receivePage = (indexPage) => {
         setPage(indexPage);

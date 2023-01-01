@@ -13,10 +13,15 @@ function Header(props) {
         props.onHandleChangeSearchStr(searchStr);
     }
 
+    const receiveFilters = (searchFilters) => {
+        // console.log("Received Search Filters NB: ", searchFilters);
+        props.onHandleChangeSearchFilters(searchFilters);
+    }
+
     return (
         <div>
             <header>
-                <NavBar onHandleChangeSearchStr={receiveSearchStr} />
+                <NavBar onHandleChangeSearchStr={receiveSearchStr} onHandleChangeSearchFilters={receiveFilters} />
             </header>
         </div>
     );

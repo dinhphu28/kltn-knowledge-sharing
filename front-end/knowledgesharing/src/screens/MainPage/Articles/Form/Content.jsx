@@ -14,6 +14,7 @@ import ArticleCommentList from './Comment/List';
 import EditArticlePopup from './EditArticlePopup/EditArticlePopup';
 import ArticleReportPopup from './ReportPopup/ReportPopup';
 import nominatedArticleApi from '../../../../apis/nominatedArticleApi';
+import userNotificationApi from '../../../../apis/userNotificationApi';
 
 // ScreenArticleFormContent.propTypes = {
     
@@ -241,6 +242,25 @@ function ScreenArticleFormContent(props) {
         }
     }
 
+    const fetchCreateNotificationToAuthorWhenHide = async () => {
+        try {
+            const data = {
+                createdBy: localStorage.getItem("username"),
+                createdByName: localStorage.getItem("username"),
+                forUser: articleDetails.author,
+                title: "Your article has been blocked",
+                content: "Article title: " + articleDetails.title
+            }
+
+            const response = await userNotificationApi.post(data);
+
+            console.log("Fetch create notification hide article successfully: ", response);
+
+        } catch (error) {
+            console.log("Failed to fetch create notification hide article: ", error);
+        }
+    }
+
     const receiveCancel = () => {
         setEditPopupOpen(false);
     }
@@ -306,6 +326,8 @@ function ScreenArticleFormContent(props) {
                                     // fetchDeleteArticle(article.id);
                                     fetchHideShowArticle(true); // hide
                                     setHideState(true);
+
+                                    fetchCreateNotificationToAuthorWhenHide();
                                 }}
                             >
                                 <FontAwesomeIcon icon={faEye} /> Hide
